@@ -15,6 +15,9 @@ export const products: Product[] = [
     stock: 100,
     imageUrl: getImageUrl('estiercol-vaca').url,
     imageHint: getImageUrl('estiercol-vaca').hint,
+    category: 'PLAN DE FERTILIZACIÓN',
+    tags: ['ABONO', 'FERTILIZACIÓN', 'SUELOS'],
+    priceRange: '1 Bulto - 50Kg',
   },
   {
     id: '2',
@@ -24,6 +27,9 @@ export const products: Product[] = [
     stock: 75,
     imageUrl: getImageUrl('estiercol-caballo').url,
     imageHint: getImageUrl('estiercol-caballo').hint,
+    category: 'PLAN DE FERTILIZACIÓN',
+    tags: ['ABONO', 'FERTILIZACIÓN', 'NITRÓGENO'],
+    priceRange: '1 Bulto - 50Kg',
   },
   {
     id: '3',
@@ -33,6 +39,9 @@ export const products: Product[] = [
     stock: 120,
     imageUrl: getImageUrl('estiercol-gallina').url,
     imageHint: getImageUrl('estiercol-gallina').hint,
+    category: 'PLAN DE FERTILIZACIÓN',
+    tags: ['ABONO', 'FERTILIZACIÓN', 'CULTIVOS'],
+    priceRange: '1 Bulto - 50Kg',
   },
   {
     id: '4',
@@ -42,6 +51,9 @@ export const products: Product[] = [
     stock: 50,
     imageUrl: getImageUrl('humus-lombriz').url,
     imageHint: getImageUrl('humus-lombriz').hint,
+    category: 'PLAN DE FERTILIZACIÓN',
+    tags: ['ABONO', 'HUMUS', 'ORGÁNICO'],
+    priceRange: '1 Bulto - 50Kg',
   },
   {
     id: '5',
@@ -51,5 +63,8 @@ export const products: Product[] = [
     stock: 80,
     imageUrl: getImageUrl('compost-organico').url,
     imageHint: getImageUrl('compost-organico').hint,
+    category: 'PLAN DE FERTILIZACIÓN',
+    tags: ['COMPOST', 'FERTILIZACIÓN', 'PREMIUM'],
+    priceRange: '1 Bulto - 50Kg',
   },
 ];

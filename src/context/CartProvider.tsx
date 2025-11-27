@@ -22,20 +22,20 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     try {
-      const storedCart = localStorage.getItem('mierdacar-cart');
+      const storedCart = localStorage.getItem('abono-lago-cart');
       if (storedCart) {
         setCartItems(JSON.parse(storedCart));
       }
     } catch (error) {
-        console.error("Failed to parse cart from localStorage", error);
-        setCartItems([]);
+      console.error("Failed to parse cart from localStorage", error);
+      setCartItems([]);
     }
     setIsInitialized(true);
   }, []);
 
   useEffect(() => {
     if (isInitialized) {
-      localStorage.setItem('mierdacar-cart', JSON.stringify(cartItems));
+      localStorage.setItem('abono-lago-cart', JSON.stringify(cartItems));
     }
   }, [cartItems, isInitialized]);
 

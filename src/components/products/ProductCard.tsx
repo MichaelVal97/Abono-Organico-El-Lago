@@ -33,27 +33,27 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+    <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-2 group border-border/50">
       <CardHeader className="p-0">
         <Link href={`/products/${product.id}`}>
-            <div className="aspect-square relative w-full">
-                <Image
-                    src={product.imageUrl}
-                    alt={product.name}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover"
-                    data-ai-hint={product.imageHint}
-                />
-            </div>
+          <div className="aspect-square relative w-full overflow-hidden">
+            <Image
+              src={product.imageUrl}
+              alt={product.name}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-110"
+              data-ai-hint={product.imageHint}
+            />
+          </div>
         </Link>
       </CardHeader>
-      <CardContent className="p-4 flex-grow">
+      <CardContent className="p-4 grow">
         <Link href={`/products/${product.id}`} className="space-y-1">
-            <CardTitle className="text-lg leading-tight hover:text-primary transition-colors">{product.name}</CardTitle>
-            <CardDescription className="text-sm font-bold text-accent">
-                ${product.price.toFixed(2)}
-            </CardDescription>
+          <CardTitle className="text-lg leading-tight hover:text-primary transition-colors">{product.name}</CardTitle>
+          <CardDescription className="text-sm font-bold text-accent">
+            ${product.price.toFixed(2)}
+          </CardDescription>
         </Link>
       </CardContent>
       <CardFooter className="p-4 pt-0">

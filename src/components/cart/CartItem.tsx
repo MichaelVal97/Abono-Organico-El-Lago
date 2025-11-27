@@ -18,7 +18,7 @@ export default function CartItem({ item }: CartItemProps) {
 
   return (
     <div className="flex items-start gap-4 py-4">
-      <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-md">
+      <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-md">
         <Image
           src={product.imageUrl}
           alt={product.name}
@@ -28,7 +28,7 @@ export default function CartItem({ item }: CartItemProps) {
           data-ai-hint={product.imageHint}
         />
       </div>
-      <div className="flex-grow">
+      <div className="grow">
         <Link href={`/products/${product.id}`} className="hover:text-primary">
           <h3 className="font-semibold text-lg">{product.name}</h3>
         </Link>

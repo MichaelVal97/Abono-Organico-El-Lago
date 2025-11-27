@@ -12,19 +12,19 @@ export default function CartIcon({ mobile = false }: { mobile?: boolean }) {
 
   if (mobile) {
     return (
-        <Link href="/cart" passHref legacyBehavior>
-            <Button variant="outline" className="w-full justify-between">
-                <span>Mi Carrito</span>
-                <div className="relative">
-                    <ShoppingBag className="h-5 w-5" />
-                    {cartCount > 0 && (
-                    <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
-                        {cartCount}
-                    </span>
-                    )}
-                </div>
-            </Button>
-      </Link>
+      <Button variant="outline" className="w-full justify-between" asChild>
+        <Link href="/cart">
+          <span>Mi Carrito</span>
+          <div className="relative">
+            <ShoppingBag className="h-5 w-5" />
+            {cartCount > 0 && (
+              <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
+                {cartCount}
+              </span>
+            )}
+          </div>
+        </Link>
+      </Button>
     )
   }
 

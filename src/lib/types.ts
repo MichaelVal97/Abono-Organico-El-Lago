@@ -6,6 +6,9 @@ export type Product = {
   stock: number;
   imageUrl: string;
   imageHint: string;
+  category?: string;
+  tags?: string[];
+  priceRange?: string;
 };
 
 export type CartItem = {

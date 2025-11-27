@@ -24,22 +24,22 @@ export default function AuthNav({ mobile = false }: { mobile?: boolean }) {
 
   if (mobile) {
     return user ? (
-        <div className="flex flex-col gap-2">
-            <Link href="/account" passHref legacyBehavior>
-                <Button variant="outline" className="w-full justify-start gap-2">
-                    <User className="h-4 w-4" />
-                    Mi Cuenta
-                </Button>
-            </Link>
-            <Button variant="outline" onClick={logout} className="w-full justify-start gap-2">
-                <LogOut className="h-4 w-4" />
-                Cerrar Sesión
-            </Button>
-        </div>
+      <div className="flex flex-col gap-2">
+        <Button variant="outline" className="w-full justify-start gap-2" asChild>
+          <Link href="/account">
+            <User className="h-4 w-4" />
+            Mi Cuenta
+          </Link>
+        </Button>
+        <Button variant="outline" onClick={logout} className="w-full justify-start gap-2">
+          <LogOut className="h-4 w-4" />
+          Cerrar Sesión
+        </Button>
+      </div>
     ) : (
-        <Link href="/login" passHref legacyBehavior>
-            <Button className="w-full">Iniciar Sesión</Button>
-        </Link>
+      <Button className="w-full" asChild>
+        <Link href="/login">Iniciar Sesión</Link>
+      </Button>
     )
   }
 

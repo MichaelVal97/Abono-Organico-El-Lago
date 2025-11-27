@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     // Simulate checking for a logged-in user in localStorage
     try {
-      const storedUser = localStorage.getItem('mierdacar-user');
+      const storedUser = localStorage.getItem('abono-lago-user');
       if (storedUser) {
         setUser(JSON.parse(storedUser));
       }
@@ -39,18 +39,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = (email: string) => {
     const mockUser: User = { uid: 'mock-uid-123', email, name: 'Usuario' };
-    localStorage.setItem('mierdacar-user', JSON.stringify(mockUser));
+    localStorage.setItem('abono-lago-user', JSON.stringify(mockUser));
     setUser(mockUser);
   };
 
   const logout = () => {
-    localStorage.removeItem('mierdacar-user');
+    localStorage.removeItem('abono-lago-user');
     setUser(null);
   };
 
   const register = (email: string, name: string) => {
     const mockUser: User = { uid: `mock-uid-${Date.now()}`, email, name };
-    localStorage.setItem('mierdacar-user', JSON.stringify(mockUser));
+    localStorage.setItem('abono-lago-user', JSON.stringify(mockUser));
     setUser(mockUser);
   };
 
