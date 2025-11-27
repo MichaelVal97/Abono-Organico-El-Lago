@@ -1,3 +1,40 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-image",
+      "description": "Lush farmland with rich soil, conveying growth and nature.",
+      "imageUrl": "https://images.unsplash.com/photo-1629573142569-e53fa508eb97?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxmYXJtJTIwc29pbHxlbnwwfHx8fDE3NjQyNjY3Njd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "farm soil"
+    },
+    {
+      "id": "estiercol-vaca",
+      "description": "A bag of cow manure.",
+      "imageUrl": "https://images.unsplash.com/photo-1637251393438-30eca8828253?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxtYW51cmUlMjBiYWd8ZW58MHx8fHwxNzY0MjY2NzY3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "manure bag"
+    },
+    {
+      "id": "estiercol-caballo",
+      "description": "A bag of horse manure.",
+      "imageUrl": "https://images.unsplash.com/photo-1542957057-debadce4ce81?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtYW51cmUlMjBiYWd8ZW58MHx8fHwxNzY0MjY2NzY3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "manure bag"
+    },
+    {
+      "id": "estiercol-gallina",
+      "description": "A bag of chicken manure.",
+      "imageUrl": "https://images.unsplash.com/photo-1597066371673-2088a5c19802?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxmZXJ0aWxpemVyJTIwYmFnfGVufDB8fHx8MTc2NDI1NjIxMHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fertilizer bag"
+    },
+    {
+      "id": "humus-lombriz",
+      "description": "A bag of worm castings (humus).",
+      "imageUrl": "https://images.unsplash.com/photo-1763741208003-cb6968d343fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxzb2lsJTIwYmFnfGVufDB8fHx8MTc2NDI2Njc2N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "soil bag"
+    },
+    {
+      "id": "compost-organico",
+      "description": "A bag of organic compost.",
+      "imageUrl": "https://images.unsplash.com/photo-1728183261737-73fc6c252e40?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjb21wb3N0JTIwYmFnfGVufDB8fHx8MTc2NDI1NjIxMHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "compost bag"
+    }
+  ]
 }
