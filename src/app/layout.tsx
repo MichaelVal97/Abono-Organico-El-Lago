@@ -3,6 +3,8 @@ import { AuthProvider } from '@/context/AuthContext';
 import { CartProvider } from '@/context/CartProvider';
 import { ThemeProvider } from '@/context/ThemeProvider';
 import { Toaster } from '@/components/ui/toaster';
+import ChatWidget from '@/components/chat/ChatWidget';
+import WhatsAppButton from '@/components/chat/WhatsAppButton';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -28,6 +30,8 @@ export default function RootLayout({
           <AuthProvider>
             <CartProvider>
               {children}
+              <ChatWidget />
+              <WhatsAppButton />
               <Toaster />
             </CartProvider>
           </AuthProvider>
