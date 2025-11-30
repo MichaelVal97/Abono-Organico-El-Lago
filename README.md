@@ -73,7 +73,5 @@ npm run dev
 2. **Chatbot**: Abra el widget de chat en la esquina inferior derecha y realice una consulta (ej. "¿Qué abono sirve para tomates?").
 3. **API**: Verifique la documentación en `http://localhost:3000/api`.
 
-## Autor
+<img width="1347" height="641" alt="image" src="https://github.com/user-attachments/assets/9c1485f0-4af4-4ecf-9c57-77f09befbc4b" />
 
-Proyecto académico - Arquitectura de Software
-Noviembre 2025
