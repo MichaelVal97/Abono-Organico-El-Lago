@@ -13,6 +13,9 @@ const config_1 = require("@nestjs/config");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const products_module_1 = require("./modules/products/products.module");
+const auth_module_1 = require("./modules/auth/auth.module");
+const users_module_1 = require("./modules/users/users.module");
+const admin_module_1 = require("./modules/admin/admin.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -22,18 +25,24 @@ exports.AppModule = AppModule = __decorate([
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
             }),
-            typeorm_1.TypeOrmModule.forRoot({
-                type: 'postgres',
-                host: process.env.DATABASE_HOST || 'localhost',
-                port: parseInt(process.env.DATABASE_PORT || '5432', 10),
-                username: process.env.DATABASE_USER || 'postgres',
-                password: process.env.DATABASE_PASSWORD || 'postgres',
-                database: process.env.DATABASE_NAME || 'abono_organico_db',
-                entities: [__dirname + '/**/*.entity{.ts,.js}'],
-                synchronize: true,
-                logging: true,
+            typeorm_1.TypeOrmModule.forRootAsync({
+                imports: [config_1.ConfigModule],
+                useFactory: (configService) => ({
+                    type: 'postgres',
+                    host: configService.get('DATABASE_HOST'),
+                    port: configService.get('DATABASE_PORT'),
+                    username: configService.get('DATABASE_USER'),
+                    password: configService.get('DATABASE_PASSWORD'),
+                    database: configService.get('DATABASE_NAME'),
+                    entities: [__dirname + '/**/*.entity{.ts,.js}'],
+                    synchronize: true,
+                }),
+                inject: [config_1.ConfigService],
             }),
             products_module_1.ProductsModule,
+            auth_module_1.AuthModule,
+            users_module_1.UsersModule,
+            admin_module_1.AdminModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

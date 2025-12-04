@@ -2,19 +2,38 @@
 
 import type { ReactNode } from 'react';
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { authApi, type AuthResponse } from '@/lib/api/auth';
+import { usersApi } from '@/lib/api/users';
 
 type User = {
-  uid: string;
+  id: string;
   email: string;
-  name: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  dateOfBirth?: string;
+  avatar?: string;
+  isActive: boolean;
+  isEmailVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+  preferences: {
+    id: string;
+    theme: 'light' | 'dark' | 'system';
+    language: 'es' | 'en';
+    emailNotifications: boolean;
+    pushNotifications: boolean;
+    newsletter: boolean;
+  };
 };
 
 type AuthContextType = {
   user: User | null;
   loading: boolean;
-  login: (email: string) => void;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  register: (email: string, name: string) => void;
+  register: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
+  refreshUser: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -24,38 +43,75 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate checking for a logged-in user in localStorage
-    try {
-      const storedUser = localStorage.getItem('abono-lago-user');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
+    // Verificar token existente y cargar usuario
+    const loadUser = async () => {
+      try {
+        const token = localStorage.getItem('abono-lago-token');
+        if (token) {
+          const profile = await usersApi.getProfile();
+          setUser(profile);
+        }
+      } catch (error) {
+        console.error('Failed to load user', error);
+        localStorage.removeItem('abono-lago-token');
+        // Eliminar cookie
+        document.cookie = 'abono-lago-token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+      } finally {
+        setLoading(false);
       }
+    };
+
+    loadUser();
+  }, []);
+
+  const login = React.useCallback(async (email: string, password: string) => {
+    const response: AuthResponse = await authApi.login({ email, password });
+    localStorage.setItem('abono-lago-token', response.token);
+    // También establecer cookie para middleware
+    document.cookie = `abono-lago-token=${response.token}; path=/; max-age=604800`; // 7 días
+    setUser(response.user);
+  }, []);
+
+  const logout = React.useCallback(() => {
+    localStorage.removeItem('abono-lago-token');
+    // Eliminar cookie
+    document.cookie = 'abono-lago-token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+    setUser(null);
+  }, []);
+
+  const register = React.useCallback(async (email: string, password: string, firstName: string, lastName: string) => {
+    const response: AuthResponse = await authApi.register({
+      email,
+      password,
+      firstName,
+      lastName
+    });
+    localStorage.setItem('abono-lago-token', response.token);
+    // También establecer cookie para middleware
+    document.cookie = `abono-lago-token=${response.token}; path=/; max-age=604800`; // 7 días
+    setUser(response.user);
+  }, []);
+
+  const refreshUser = React.useCallback(async () => {
+    try {
+      const profile = await usersApi.getProfile();
+      setUser(profile);
     } catch (error) {
-      console.error("Failed to parse user from localStorage", error);
-    } finally {
-      setLoading(false);
+      console.error('Failed to refresh user', error);
     }
   }, []);
 
-  const login = (email: string) => {
-    const mockUser: User = { uid: 'mock-uid-123', email, name: 'Usuario' };
-    localStorage.setItem('abono-lago-user', JSON.stringify(mockUser));
-    setUser(mockUser);
-  };
-
-  const logout = () => {
-    localStorage.removeItem('abono-lago-user');
-    setUser(null);
-  };
-
-  const register = (email: string, name: string) => {
-    const mockUser: User = { uid: `mock-uid-${Date.now()}`, email, name };
-    localStorage.setItem('abono-lago-user', JSON.stringify(mockUser));
-    setUser(mockUser);
-  };
+  const value = React.useMemo(() => ({
+    user,
+    loading,
+    login,
+    logout,
+    register,
+    refreshUser
+  }), [user, loading, login, logout, register, refreshUser]);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, register }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

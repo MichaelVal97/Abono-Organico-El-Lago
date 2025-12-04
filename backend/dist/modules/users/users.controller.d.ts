@@ -1,0 +1,86 @@
+import { UsersService } from './users.service';
+import { UpdateUserDto } from '../auth/dto/update-user.dto';
+import { UpdatePreferencesDto } from '../auth/dto/update-preferences.dto';
+import { CreateAddressDto } from '../auth/dto/create-address.dto';
+import { UpdateAddressDto } from '../auth/dto/update-address.dto';
+export declare class UsersController {
+    private readonly usersService;
+    constructor(usersService: UsersService);
+    getProfile(req: any): Promise<{
+        id: string;
+        email: string;
+        googleId?: string;
+        firstName: string;
+        lastName: string;
+        role: "user" | "admin";
+        phone?: string;
+        dateOfBirth?: Date;
+        avatar?: string;
+        isActive: boolean;
+        isEmailVerified: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        preferences: import("../auth/entities/user-preferences.entity").UserPreferences;
+        addresses: import("../auth/entities/user-address.entity").UserAddress[];
+    }>;
+    updateProfile(req: any, updateUserDto: UpdateUserDto): Promise<{
+        id: string;
+        email: string;
+        googleId?: string;
+        firstName: string;
+        lastName: string;
+        role: "user" | "admin";
+        phone?: string;
+        dateOfBirth?: Date;
+        avatar?: string;
+        isActive: boolean;
+        isEmailVerified: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        preferences: import("../auth/entities/user-preferences.entity").UserPreferences;
+        addresses: import("../auth/entities/user-address.entity").UserAddress[];
+    }>;
+    uploadAvatar(req: any, file: Express.Multer.File): Promise<{
+        id: string;
+        email: string;
+        googleId?: string;
+        firstName: string;
+        lastName: string;
+        role: "user" | "admin";
+        phone?: string;
+        dateOfBirth?: Date;
+        avatar?: string;
+        isActive: boolean;
+        isEmailVerified: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        preferences: import("../auth/entities/user-preferences.entity").UserPreferences;
+        addresses: import("../auth/entities/user-address.entity").UserAddress[];
+    }>;
+    deleteAvatar(req: any): Promise<{
+        id: string;
+        email: string;
+        googleId?: string;
+        firstName: string;
+        lastName: string;
+        role: "user" | "admin";
+        phone?: string;
+        dateOfBirth?: Date;
+        avatar?: string;
+        isActive: boolean;
+        isEmailVerified: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        preferences: import("../auth/entities/user-preferences.entity").UserPreferences;
+        addresses: import("../auth/entities/user-address.entity").UserAddress[];
+    }>;
+    getPreferences(req: any): Promise<import("../auth/entities/user-preferences.entity").UserPreferences>;
+    updatePreferences(req: any, updatePreferencesDto: UpdatePreferencesDto): Promise<import("../auth/entities/user-preferences.entity").UserPreferences>;
+    getAddresses(req: any): Promise<import("../auth/entities/user-address.entity").UserAddress[]>;
+    createAddress(req: any, createAddressDto: CreateAddressDto): Promise<import("../auth/entities/user-address.entity").UserAddress>;
+    updateAddress(req: any, addressId: string, updateAddressDto: UpdateAddressDto): Promise<import("../auth/entities/user-address.entity").UserAddress>;
+    deleteAddress(req: any, addressId: string): Promise<{
+        message: string;
+    }>;
+    setDefaultAddress(req: any, addressId: string): Promise<import("../auth/entities/user-address.entity").UserAddress>;
+}

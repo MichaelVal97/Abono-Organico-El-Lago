@@ -2,14 +2,21 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // Enable CORS for frontend (Next.js on port 9002)
   app.enableCors({
-    origin: ['http://localhost:9002', 'http://localhost:3000'],
+    origin: ['http://localhost:9002', 'http://localhost:3000', 'http://localhost:3001'],
     credentials: true,
+  });
+
+  // Serve static files for uploads
+  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+    prefix: '/uploads/',
   });
 
   // Global validation pipe
@@ -26,9 +33,12 @@ async function bootstrap() {
     .setTitle('Abono Orgánico El Lago API')
     .setDescription(
       'API RESTful para el sistema de e-commerce de abonos orgánicos. ' +
-      'Incluye gestión de productos, categorías, clientes y órdenes.',
+      'Incluye gestión de productos, autenticación de usuarios, perfiles y direcciones.',
     )
     .setVersion('1.0')
+    .addBearerAuth()
+    .addTag('auth', 'Autenticación y registro de usuarios')
+    .addTag('users', 'Gestión de perfil, preferencias y direcciones')
     .addTag('products', 'Operaciones sobre productos de abono orgánico')
     .addTag('categories', 'Operaciones sobre categorías de productos')
     .addTag('customers', 'Operaciones sobre clientes')
@@ -45,4 +55,5 @@ async function bootstrap() {
   console.log(`📚 Swagger documentation: http://localhost:${port}/api\n`);
 }
 bootstrap();
+
 
