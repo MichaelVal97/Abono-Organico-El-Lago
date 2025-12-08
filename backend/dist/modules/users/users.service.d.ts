@@ -11,6 +11,7 @@ export declare class UsersService {
     private preferencesRepository;
     private addressRepository;
     constructor(userRepository: Repository<User>, preferencesRepository: Repository<UserPreferences>, addressRepository: Repository<UserAddress>);
+    onModuleInit(): Promise<void>;
     private sanitizeUser;
     findAll(): Promise<{
         id: string;
