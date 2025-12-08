@@ -70,8 +70,31 @@ npm run dev
 ## Verificación del Sistema
 
 1. **Navegación**: Acceda a `http://localhost:9002` y verifique que los productos se carguen correctamente.
-2. **Chatbot**: Abra el widget de chat en la esquina inferior derecha y realice una consulta (ej. "¿Qué abono sirve para tomates?").
+2. **Chatbot**: Abra el widget de chat en la esquina inferior derecha y realice una consulta (ej. "¿Cuál es el precio?").
 3. **API**: Verifique la documentación en `http://localhost:3000/api`.
+
+## Despliegue en Producción
+
+El proyecto está configurado para desplegarse en:
+- **Frontend**: Vercel
+- **Backend**: Railway (con PostgreSQL)
+- **Chatbot**: Railway
+
+Variables de entorno necesarias en producción:
+- `NEXT_PUBLIC_API_URL`: URL del backend en Railway
+- `NEXT_PUBLIC_CHATBOT_WS`: URL del chatbot WebSocket
+
+## Características Principales
+
+- ✅ Catálogo de productos con galería de imágenes
+- ✅ Sistema de autenticación (Google OAuth + Local)
+- ✅ Panel de administración completo
+- ✅ Chatbot inteligente con respuestas automáticas
+- ✅ Integración con WhatsApp
+- ✅ Carrito de compras
+- ✅ Mapa de ubicación interactivo
+- ✅ Sección de redes sociales
 
 ## Autor
 
+Proyecto desarrollado para Abono Orgánico El Lago

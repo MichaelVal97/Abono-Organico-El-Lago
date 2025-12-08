@@ -7,6 +7,7 @@ import CartItem from './CartItem';
 import { Separator } from '@/components/ui/separator';
 import { ShoppingBag } from 'lucide-react';
 import Link from 'next/link';
+import { formatPrice } from '@/lib/utils';
 
 export default function CartView() {
   const { cartItems, cartTotal, clearCart, cartCount } = useCart();
@@ -48,20 +49,23 @@ export default function CartView() {
           <CardContent className="space-y-4">
             <div className="flex justify-between">
               <span>Subtotal</span>
-              <span>${cartTotal.toFixed(2)}</span>
+              <span>{formatPrice(cartTotal)}</span>
             </div>
             <div className="flex justify-between">
-              <span>Envío (simulado)</span>
-              <span>$5.00</span>
+              <span>Transporte</span>
+              <span className="text-muted-foreground text-sm text-right">Por acordar /<br />Contra entrega</span>
             </div>
             <Separator />
             <div className="flex justify-between font-bold text-lg">
               <span>Total</span>
-              <span>${(cartTotal + 5).toFixed(2)}</span>
+              <span>{formatPrice(cartTotal)}</span>
             </div>
+            <p className="text-xs text-muted-foreground text-center">
+              * El costo del transporte se acuerda al momento de la entrega.
+            </p>
           </CardContent>
           <CardFooter className="flex-col gap-2">
-            <Button className="w-full">Proceder al Pago (Simulado)</Button>
+            <Button className="w-full">Proceder al Pago</Button>
             <Button variant="ghost" className="w-full text-destructive hover:text-destructive" onClick={clearCart}>
               Vaciar Carrito
             </Button>

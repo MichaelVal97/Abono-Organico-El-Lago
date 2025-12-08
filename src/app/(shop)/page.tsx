@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import ProductList from '@/components/products/ProductList';
 import LocationMap from '@/components/common/LocationMap';
+import ContactSection from '@/components/common/ContactSection';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function HomePage() {
@@ -35,7 +36,22 @@ export default function HomePage() {
           </Button>
         </div>
       </section>
+
+      {/* Central Logo Section */}
+      <div className="container py-8 flex justify-center">
+        <div className="relative w-64 h-64 md:w-80 md:h-80 animate-fade-in">
+          <Image
+            src="https://i.postimg.cc/bPWqYmmz/Whats-App-Image-2025-11-27-at-15-02-02-Photoroom.png"
+            alt="Logo Abono Orgánico El Lago"
+            fill
+            className="object-contain drop-shadow-xl"
+            sizes="(max-width: 768px) 256px, 320px"
+          />
+        </div>
+      </div>
+
       <ProductList />
+      <ContactSection />
       <LocationMap />
     </>
   );

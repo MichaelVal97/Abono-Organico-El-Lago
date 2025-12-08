@@ -89,7 +89,8 @@ export function ProfileForm({ user }: ProfileFormProps) {
         return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
     };
 
-    const avatarUrl = user.avatar ? `http://localhost:3000${user.avatar}` : undefined;
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    const avatarUrl = user.avatar ? `${API_URL}${user.avatar}` : undefined;
 
     return (
         <Card>

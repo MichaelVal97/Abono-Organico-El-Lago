@@ -24,7 +24,8 @@ export function UserMenu() {
         return `${user.firstName?.charAt(0) || ''}${user.lastName?.charAt(0) || ''}`.toUpperCase();
     };
 
-    const avatarUrl = user.avatar ? `http://localhost:3000${user.avatar}` : undefined;
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    const avatarUrl = user.avatar ? `${API_URL}${user.avatar}` : undefined;
 
     const handleLogout = () => {
         logout();
@@ -53,6 +54,17 @@ export function UserMenu() {
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                {(user.email === 'abonoellago@gmail.com' || user.role === 'admin') && (
+                    <>
+                        <DropdownMenuItem asChild>
+                            <Link href="/admin" className="cursor-pointer font-bold">
+                                <Settings className="mr-2 h-4 w-4" />
+                                <span>Panel Admin</span>
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                    </>
+                )}
                 <DropdownMenuItem asChild>
                     <Link href="/profile" className="cursor-pointer">
                         <User className="mr-2 h-4 w-4" />

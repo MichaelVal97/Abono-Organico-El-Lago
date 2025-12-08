@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/card';
 import { useCart } from '@/context/CartProvider';
 import { useToast } from '@/hooks/use-toast';
+import { formatPrice } from '@/lib/utils';
 
 interface ProductCardProps {
   product: Product;
@@ -52,7 +53,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <Link href={`/products/${product.id}`} className="space-y-1">
           <CardTitle className="text-lg leading-tight hover:text-primary transition-colors">{product.name}</CardTitle>
           <CardDescription className="text-sm font-bold text-accent">
-            ${product.price.toFixed(2)}
+            {formatPrice(product.price)}
           </CardDescription>
         </Link>
       </CardContent>

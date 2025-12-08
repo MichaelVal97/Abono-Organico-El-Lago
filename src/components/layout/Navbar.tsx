@@ -23,6 +23,7 @@ const navLinks = [
   { href: '/#products', label: 'Productos' },
   { href: '/about', label: 'Nosotros' },
   { href: '/process', label: 'Proceso' },
+  { href: '/contact', label: 'Contáctanos' },
   { href: '/admin/feedback', label: 'Feedback AI' },
 ];
 
@@ -32,12 +33,13 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-lg supports-backdrop-filter:bg-background/60">
-      <div className="container flex h-16 items-center">
+      <div className="container flex h-24 items-center">
         <Link href="/" className="mr-8 flex items-center gap-2 group">
-          <Sprout className="h-6 w-6 text-primary transition-transform group-hover:scale-110 group-hover:rotate-12" />
-          <span className="hidden font-bold sm:inline-block text-lg">
-            Abono Orgánico El Lago
-          </span>
+          <img
+            src="https://i.postimg.cc/bPWqYmmz/Whats-App-Image-2025-11-27-at-15-02-02-Photoroom.png"
+            alt="Logo Abono Orgánico El Lago"
+            className="h-20 w-auto object-contain transition-transform group-hover:scale-105"
+          />
         </Link>
         <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
           {navLinks.map(({ href, label }) => (
@@ -71,8 +73,11 @@ export default function Navbar() {
               <div className="flex flex-col h-full">
                 <div className="flex items-center justify-between border-b pb-4">
                   <Link href="/" className="flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Sprout className="h-6 w-6 text-primary" />
-                    <span className="font-bold text-lg">Abono Orgánico El Lago</span>
+                    <img
+                      src="https://i.postimg.cc/bPWqYmmz/Whats-App-Image-2025-11-27-at-15-02-02-Photoroom.png"
+                      alt="Logo Abono Orgánico El Lago"
+                      className="h-24 w-auto object-contain"
+                    />
                   </Link>
                   <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)}>
                     <X />

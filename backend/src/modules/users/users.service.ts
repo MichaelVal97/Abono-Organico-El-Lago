@@ -3,6 +3,7 @@ import {
     NotFoundException,
     BadRequestException,
 } from '@nestjs/common';
+import * as bcrypt from 'bcryptjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../auth/entities/user.entity';
@@ -23,6 +24,44 @@ export class UsersService {
         @InjectRepository(UserAddress)
         private addressRepository: Repository<UserAddress>,
     ) { }
+
+    async onModuleInit() {
+        const adminEmail = 'abonoellago@gmail.com';
+        try {
+            const adminExists = await this.userRepository.findOne({ where: { email: adminEmail } });
+
+            if (!adminExists) {
+                console.log('Seeding Admin User...');
+                const salt = await bcrypt.genSalt(10);
+                const hashedPassword = await bcrypt.hash('Admin135', salt);
+
+                const adminUser = this.userRepository.create({
+                    email: adminEmail,
+                    password: hashedPassword,
+                    fullName: 'Admin Abono El Lago',
+                    isActive: true,
+                    role: 'admin',
+                    roles: ['admin'],
+                } as any);
+
+                // Create default preferences
+                const preferences = this.preferencesRepository.create({
+                    notifications: true,
+                    newsletter: true
+                });
+                await this.preferencesRepository.save(preferences);
+                adminUser.preferences = preferences;
+
+                await this.userRepository.save(adminUser);
+                console.log('Admin User Created Successfully');
+            }
+        } catch (error) {
+            console.error('Error seeding admin user:', error);
+        }
+    }
+
+    // Re-reading: I can't easily hash without bcrypt import. 
+    // Let's Import bcrypt.
 
     private sanitizeUser(user: User) {
         const { password, ...profile } = user;

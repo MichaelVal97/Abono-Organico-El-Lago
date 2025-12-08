@@ -9,6 +9,7 @@ export type Product = {
   category?: string;
   tags?: string[];
   priceRange?: string;
+  images?: string[];
 };
 
 export type CartItem = {

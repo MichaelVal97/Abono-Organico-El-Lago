@@ -36,6 +36,12 @@ export default function AdminLayout({
             active: pathname === '/admin/users',
         },
         {
+            href: '/admin/products',
+            label: 'Productos',
+            icon: ShoppingBag,
+            active: pathname === '/admin/products',
+        },
+        {
             href: '/admin/orders',
             label: 'Pedidos',
             icon: ShoppingBag,
@@ -71,8 +77,8 @@ export default function AdminLayout({
                                         key={route.href}
                                         href={route.href}
                                         className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${route.active
-                                                ? 'bg-primary text-primary-foreground'
-                                                : 'hover:bg-muted'
+                                            ? 'bg-primary text-primary-foreground'
+                                            : 'hover:bg-muted'
                                             }`}
                                     >
                                         <route.icon className="h-5 w-5" />
@@ -106,8 +112,8 @@ export default function AdminLayout({
                             key={route.href}
                             href={route.href}
                             className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${route.active
-                                    ? 'bg-primary text-primary-foreground'
-                                    : 'hover:bg-muted'
+                                ? 'bg-primary text-primary-foreground'
+                                : 'hover:bg-muted'
                                 }`}
                         >
                             <route.icon className="h-5 w-5" />

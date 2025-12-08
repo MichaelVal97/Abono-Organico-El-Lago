@@ -7,6 +7,7 @@ import type { CartItem as CartItemType } from '@/lib/types';
 import { useCart } from '@/context/CartProvider';
 import { Button } from '@/components/ui/button';
 import QuantitySelector from './QuantitySelector';
+import { formatPrice } from '@/lib/utils';
 
 interface CartItemProps {
   item: CartItemType;
@@ -33,7 +34,7 @@ export default function CartItem({ item }: CartItemProps) {
           <h3 className="font-semibold text-lg">{product.name}</h3>
         </Link>
         <p className="text-sm text-muted-foreground">
-          Precio: ${product.price.toFixed(2)}
+          Precio: {formatPrice(product.price)}
         </p>
         <div className="mt-2">
           <QuantitySelector
@@ -45,7 +46,7 @@ export default function CartItem({ item }: CartItemProps) {
       </div>
       <div className="flex flex-col items-end justify-between h-full">
         <p className="font-semibold text-lg">
-          ${(product.price * quantity).toFixed(2)}
+          {formatPrice(product.price * quantity)}
         </p>
         <Button
           variant="ghost"

@@ -12,11 +12,13 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import QuantitySelector from '@/components/cart/QuantitySelector';
 import { useToast } from '@/hooks/use-toast';
+import { formatPrice } from '@/lib/utils';
 
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const { addToCart } = useCart();
   const { toast } = useToast();
 
@@ -25,6 +27,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   if (!product) {
     notFound();
   }
+
+  // Ensure we have a valid image to show (state > first gallery image > main image)
+  const currentImage = selectedImage || (product.images && product.images.length > 0 ? product.images[0] : product.imageUrl);
+
+  // Combine all available images for the gallery (prevent duplicates if needed, or just use product.images if robust)
+  // Assuming product.images replaces the single imageUrl as the source of truth for this feature, 
+  // but falling back to imageUrl if images is empty.
+  const galleryImages = product.images && product.images.length > 0 ? product.images : [product.imageUrl];
 
   const handleAddToCart = () => {
     addToCart(product, quantity);
@@ -42,16 +52,41 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         <CardContent className="p-0">
           <div className="grid md:grid-cols-2 gap-0">
             {/* Image Section */}
-            <div className="relative aspect-square md:aspect-auto md:min-h-[600px] bg-muted">
-              <Image
-                src={product.imageUrl}
-                alt={product.name}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover"
-                data-ai-hint={product.imageHint}
-                priority
-              />
+            <div className="flex flex-col bg-muted">
+              {/* Main Image */}
+              <div className="relative aspect-square md:aspect-auto md:min-h-[500px] w-full">
+                <Image
+                  src={currentImage}
+                  alt={product.name}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                  data-ai-hint={product.imageHint}
+                  priority
+                />
+              </div>
+
+              {/* Thumbnails Gallery */}
+              {galleryImages.length > 1 && (
+                <div className="flex gap-2 p-4 overflow-x-auto bg-background/50 backdrop-blur-sm">
+                  {galleryImages.map((img, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedImage(img)}
+                      className={`relative w-20 h-20 flex-shrink-0 rounded-md overflow-hidden border-2 transition-all ${currentImage === img ? 'border-primary ring-2 ring-primary/20' : 'border-transparent hover:border-muted-foreground/50'
+                        }`}
+                    >
+                      <Image
+                        src={img}
+                        alt={`${product.name} view ${index + 1}`}
+                        fill
+                        className="object-cover"
+                        sizes="80px"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Product Info Section */}
@@ -64,15 +99,21 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                   </h1>
 
                   {/* Price */}
-                  <div className="mt-4 flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-primary">
-                      ${product.price.toFixed(2)}
-                    </span>
-                    {product.priceRange && (
-                      <span className="text-sm text-muted-foreground">
-                        / {product.priceRange}
+                  <div className="mt-4 flex flex-col gap-2">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-3xl font-bold text-primary">
+                        {formatPrice(product.price)}
                       </span>
-                    )}
+                      {product.priceRange && (
+                        <span className="text-sm text-muted-foreground">
+                          / {product.priceRange}
+                        </span>
+                      )}
+                    </div>
+                    {/* Discount Label */}
+                    <Badge variant="destructive" className="w-fit text-sm px-3 py-1">
+                      10% de descuento en pedidos mayores a 100 bultos
+                    </Badge>
                   </div>
                 </div>
 
@@ -128,6 +169,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     onQuantityChange={setQuantity}
                     maxStock={product.stock}
                   />
+                  {quantity >= 100 && (
+                    <p className="text-sm font-medium text-green-600 animate-pulse">
+                      ¡Aplica 10% de descuento!
+                    </p>
+                  )}
                 </div>
 
                 {/* Add to Cart Button */}
@@ -151,8 +197,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 </Button>
 
                 {/* Additional Info */}
-                <p className="text-xs text-muted-foreground text-center">
-                  No incluye costo de envío.
+                <p className="text-xs text-muted-foreground text-center font-medium">
+                  Transporte por aparte.
                 </p>
               </div>
             </div>
