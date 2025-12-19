@@ -11,6 +11,7 @@ export declare class OrdersService {
     create(userId: string, createOrderDto: CreateOrderDto): Promise<Order>;
     findAll(): Promise<Order[]>;
     findOne(id: string): Promise<Order>;
+    findByUser(userId: string): Promise<Order[]>;
     getStats(): Promise<{
         totalOrders: number;
         revenue: number;

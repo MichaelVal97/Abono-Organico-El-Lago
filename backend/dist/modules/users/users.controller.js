@@ -29,6 +29,9 @@ let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
     }
+    async findAll() {
+        return this.usersService.findAll();
+    }
     async getProfile(req) {
         return this.usersService.getProfile(req.user.id);
     }
@@ -66,8 +69,25 @@ let UsersController = class UsersController {
     async setDefaultAddress(req, addressId) {
         return this.usersService.setDefaultAddress(req.user.id, addressId);
     }
+    async findOne(id) {
+        return this.usersService.getProfile(id);
+    }
+    async updateRole(id, role) {
+        return this.usersService.updateRole(id, role);
+    }
+    async update(id, updateUserDto) {
+        return this.usersService.updateProfile(id, updateUserDto);
+    }
 };
 exports.UsersController = UsersController;
+__decorate([
+    (0, common_1.Get)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Listar todos los usuarios' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Lista de usuarios obtenida exitosamente' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('profile'),
     (0, swagger_1.ApiOperation)({ summary: 'Obtener perfil del usuario autenticado' }),
@@ -197,6 +217,35 @@ __decorate([
     __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "setDefaultAddress", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    (0, swagger_1.ApiOperation)({ summary: 'Obtener un usuario por ID (Admin)' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Usuario obtenido exitosamente' }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Patch)(':id/role'),
+    (0, swagger_1.ApiOperation)({ summary: 'Cambiar rol de usuario (Admin)' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Rol actualizado exitosamente' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)('role')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateRole", null);
+__decorate([
+    (0, common_1.Patch)(':id'),
+    (0, swagger_1.ApiOperation)({ summary: 'Actualizar usuario por ID (Admin)' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Usuario actualizado exitosamente' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_user_dto_1.UpdateUserDto]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "update", null);
 exports.UsersController = UsersController = __decorate([
     (0, swagger_1.ApiTags)('users'),
     (0, swagger_1.ApiBearerAuth)(),

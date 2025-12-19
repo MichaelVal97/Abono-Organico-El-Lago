@@ -6,6 +6,24 @@ import { UpdateAddressDto } from '../auth/dto/update-address.dto';
 export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
+    findAll(): Promise<{
+        id: string;
+        email: string;
+        googleId?: string;
+        firstName: string;
+        lastName: string;
+        role: "user" | "admin";
+        phone?: string;
+        dateOfBirth?: Date;
+        avatar?: string;
+        isActive: boolean;
+        isEmailVerified: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        preferences: import("../auth/entities/user-preferences.entity").UserPreferences;
+        addresses: import("../auth/entities/user-address.entity").UserAddress[];
+        orders: import("../orders/entities/order.entity").Order[];
+    }[]>;
     getProfile(req: any): Promise<{
         id: string;
         email: string;
@@ -87,4 +105,58 @@ export declare class UsersController {
         message: string;
     }>;
     setDefaultAddress(req: any, addressId: string): Promise<import("../auth/entities/user-address.entity").UserAddress>;
+    findOne(id: string): Promise<{
+        id: string;
+        email: string;
+        googleId?: string;
+        firstName: string;
+        lastName: string;
+        role: "user" | "admin";
+        phone?: string;
+        dateOfBirth?: Date;
+        avatar?: string;
+        isActive: boolean;
+        isEmailVerified: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        preferences: import("../auth/entities/user-preferences.entity").UserPreferences;
+        addresses: import("../auth/entities/user-address.entity").UserAddress[];
+        orders: import("../orders/entities/order.entity").Order[];
+    }>;
+    updateRole(id: string, role: 'user' | 'admin'): Promise<{
+        id: string;
+        email: string;
+        googleId?: string;
+        firstName: string;
+        lastName: string;
+        role: "user" | "admin";
+        phone?: string;
+        dateOfBirth?: Date;
+        avatar?: string;
+        isActive: boolean;
+        isEmailVerified: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        preferences: import("../auth/entities/user-preferences.entity").UserPreferences;
+        addresses: import("../auth/entities/user-address.entity").UserAddress[];
+        orders: import("../orders/entities/order.entity").Order[];
+    }>;
+    update(id: string, updateUserDto: UpdateUserDto): Promise<{
+        id: string;
+        email: string;
+        googleId?: string;
+        firstName: string;
+        lastName: string;
+        role: "user" | "admin";
+        phone?: string;
+        dateOfBirth?: Date;
+        avatar?: string;
+        isActive: boolean;
+        isEmailVerified: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        preferences: import("../auth/entities/user-preferences.entity").UserPreferences;
+        addresses: import("../auth/entities/user-address.entity").UserAddress[];
+        orders: import("../orders/entities/order.entity").Order[];
+    }>;
 }

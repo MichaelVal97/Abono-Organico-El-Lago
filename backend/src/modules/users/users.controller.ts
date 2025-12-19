@@ -30,6 +30,13 @@ import { UpdateAddressDto } from '../auth/dto/update-address.dto';
 export class UsersController {
     constructor(private readonly usersService: UsersService) { }
 
+    @Get()
+    @ApiOperation({ summary: 'Listar todos los usuarios' })
+    @ApiResponse({ status: 200, description: 'Lista de usuarios obtenida exitosamente' })
+    async findAll() {
+        return this.usersService.findAll();
+    }
+
     @Get('profile')
     @ApiOperation({ summary: 'Obtener perfil del usuario autenticado' })
     @ApiResponse({ status: 200, description: 'Perfil obtenido exitosamente' })
@@ -144,5 +151,26 @@ export class UsersController {
     @ApiResponse({ status: 200, description: 'Dirección marcada como predeterminada' })
     async setDefaultAddress(@Request() req, @Param('id') addressId: string) {
         return this.usersService.setDefaultAddress(req.user.id, addressId);
+    }
+
+    @Get(':id')
+    @ApiOperation({ summary: 'Obtener un usuario por ID (Admin)' })
+    @ApiResponse({ status: 200, description: 'Usuario obtenido exitosamente' })
+    async findOne(@Param('id') id: string) {
+        return this.usersService.getProfile(id);
+    }
+
+    @Patch(':id/role')
+    @ApiOperation({ summary: 'Cambiar rol de usuario (Admin)' })
+    @ApiResponse({ status: 200, description: 'Rol actualizado exitosamente' })
+    async updateRole(@Param('id') id: string, @Body('role') role: 'user' | 'admin') {
+        return this.usersService.updateRole(id, role);
+    }
+
+    @Patch(':id')
+    @ApiOperation({ summary: 'Actualizar usuario por ID (Admin)' })
+    @ApiResponse({ status: 200, description: 'Usuario actualizado exitosamente' })
+    async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+        return this.usersService.updateProfile(id, updateUserDto);
     }
 }

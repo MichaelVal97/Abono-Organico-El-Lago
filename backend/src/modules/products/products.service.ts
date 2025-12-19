@@ -48,10 +48,10 @@ export class ProductsService {
 
         try {
             // Delete related reviews
-            await queryRunner.query('DELETE FROM "reviews" WHERE "productId" = $1', [id]);
+            await queryRunner.query('DELETE FROM "reviews" WHERE "product_id" = $1', [id]);
 
             // Delete related order items
-            await queryRunner.query('DELETE FROM "order_items" WHERE "productId" = $1', [id]);
+            await queryRunner.query('DELETE FROM "order_items" WHERE "product_id" = $1', [id]);
 
             // Note: We don't delete Orders here as they belong to Users.
 

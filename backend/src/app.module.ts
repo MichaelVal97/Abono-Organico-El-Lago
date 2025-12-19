@@ -9,6 +9,7 @@ import { UsersModule } from './modules/users/users.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { ReviewsModule } from './modules/reviews/reviews.module';
 import { OrdersModule } from './modules/orders/orders.module';
+import { AgronomistModule } from './modules/agronomist/agronomist.module';
 
 @Module({
   imports: [
@@ -33,9 +34,9 @@ import { OrdersModule } from './modules/orders/orders.module';
     AuthModule,
     UsersModule,
     AdminModule,
-    AdminModule,
     ReviewsModule,
     OrdersModule,
+    AgronomistModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -24,7 +24,12 @@ let OrdersController = class OrdersController {
         this.ordersService = ordersService;
     }
     create(req, createOrderDto) {
+        console.log('Creating order. User:', req.user);
+        console.log('DTO:', createOrderDto);
         return this.ordersService.create(req.user.id, createOrderDto);
+    }
+    getMyOrders(req) {
+        return this.ordersService.findByUser(req.user.id);
     }
     findAll() {
         return this.ordersService.findAll();
@@ -48,6 +53,16 @@ __decorate([
     __metadata("design:paramtypes", [Object, create_order_dto_1.CreateOrderDto]),
     __metadata("design:returntype", void 0)
 ], OrdersController.prototype, "create", null);
+__decorate([
+    (0, common_1.Get)('my-orders'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Get orders for the authenticated user' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], OrdersController.prototype, "getMyOrders", null);
 __decorate([
     (0, common_1.Get)(),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

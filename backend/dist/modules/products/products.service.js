@@ -51,8 +51,8 @@ let ProductsService = class ProductsService {
         await queryRunner.connect();
         await queryRunner.startTransaction();
         try {
-            await queryRunner.query('DELETE FROM "reviews" WHERE "productId" = $1', [id]);
-            await queryRunner.query('DELETE FROM "order_items" WHERE "productId" = $1', [id]);
+            await queryRunner.query('DELETE FROM "reviews" WHERE "product_id" = $1', [id]);
+            await queryRunner.query('DELETE FROM "order_items" WHERE "product_id" = $1', [id]);
             await queryRunner.manager.remove(product);
             await queryRunner.commitTransaction();
         }

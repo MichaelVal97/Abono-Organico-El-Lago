@@ -65,19 +65,28 @@ export class OrdersService {
         return order;
     }
 
+    async findByUser(userId: string): Promise<Order[]> {
+        return await this.orderRepository.find({
+            where: { user: { id: userId } },
+            relations: ['user', 'items', 'items.product'],
+            order: { createdAt: 'DESC' },
+        });
+    }
+
     async getStats() {
         const totalOrders = await this.orderRepository.count();
         const revenueResult = await this.orderRepository
-            .createQueryBuilder('order')
-            .select('SUM(order.total)', 'total')
+            .createQueryBuilder('o')
+            .select('SUM(o.total)', 'total')
             .getRawOne();
 
-        const revenue = revenueResult ? parseFloat(revenueResult.total) : 0;
+        const revenue = revenueResult && revenueResult.total ? parseFloat(revenueResult.total) : 0;
 
         // Active users (unique users who placed orders)
+        // Active users (unique users who placed orders)
         const activeUsersResult = await this.orderRepository
-            .createQueryBuilder('order')
-            .select('COUNT(DISTINCT order.user_id)', 'count')
+            .createQueryBuilder('o')
+            .select('COUNT(DISTINCT o.user_id)', 'count')
             .getRawOne();
 
         const activeUsers = activeUsersResult ? parseInt(activeUsersResult.count) : 0;

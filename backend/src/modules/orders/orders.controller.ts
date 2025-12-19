@@ -14,7 +14,17 @@ export class OrdersController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Create a new order' })
     create(@Request() req, @Body() createOrderDto: CreateOrderDto) {
+        console.log('Creating order. User:', req.user);
+        console.log('DTO:', createOrderDto);
         return this.ordersService.create(req.user.id, createOrderDto);
+    }
+
+    @Get('my-orders')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Get orders for the authenticated user' })
+    getMyOrders(@Request() req) {
+        return this.ordersService.findByUser(req.user.id);
     }
 
     @Get()

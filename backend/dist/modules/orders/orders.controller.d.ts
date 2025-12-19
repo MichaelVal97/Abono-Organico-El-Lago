@@ -4,6 +4,7 @@ export declare class OrdersController {
     private readonly ordersService;
     constructor(ordersService: OrdersService);
     create(req: any, createOrderDto: CreateOrderDto): Promise<import("./entities/order.entity").Order>;
+    getMyOrders(req: any): Promise<import("./entities/order.entity").Order[]>;
     findAll(): Promise<import("./entities/order.entity").Order[]>;
     getStats(): Promise<{
         totalOrders: number;

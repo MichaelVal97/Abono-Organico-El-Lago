@@ -31,6 +31,7 @@ __decorate([
 ], OrderItem.prototype, "order", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => product_entity_1.Product),
+    (0, typeorm_1.JoinColumn)({ name: 'product_id' }),
     __metadata("design:type", product_entity_1.Product)
 ], OrderItem.prototype, "product", void 0);
 __decorate([
