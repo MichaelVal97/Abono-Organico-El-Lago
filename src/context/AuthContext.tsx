@@ -10,6 +10,7 @@ type User = {
   email: string;
   firstName: string;
   lastName: string;
+  role?: 'user' | 'admin';
   phone?: string;
   dateOfBirth?: string;
   avatar?: string;

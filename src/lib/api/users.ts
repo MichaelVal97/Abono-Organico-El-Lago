@@ -235,4 +235,40 @@ export const usersApi = {
 
         return response.json();
     },
+
+    async updateRole(userId: string, role: 'user' | 'admin') {
+        const token = getAuthToken();
+        const response = await fetch(`${API_URL}/users/${userId}/role`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ role }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Error al actualizar rol');
+        }
+
+        return response.json();
+    },
+
+    async updateAdmin(userId: string, data: UpdateUserData) {
+        const token = getAuthToken();
+        const response = await fetch(`${API_URL}/users/${userId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            throw new Error('Error al actualizar usuario');
+        }
+
+        return response.json();
+    },
 };

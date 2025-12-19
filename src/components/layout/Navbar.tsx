@@ -26,6 +26,7 @@ const navLinks = [
   { href: '/about', label: 'Nosotros' },
   { href: '/process', label: 'Proceso' },
   { href: '/results', label: 'Resultados' },
+  { href: '/agronomist', label: 'Sé Agrónomo' },
   { href: '/contact', label: 'Contáctanos' },
 ];
 

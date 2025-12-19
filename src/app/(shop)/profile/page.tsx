@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProfileForm } from '@/components/profile/ProfileForm';
 import { PreferencesForm } from '@/components/profile/PreferencesForm';
 import { AddressManager } from '@/components/profile/AddressManager';
+import { MyOrders } from '@/components/profile/MyOrders';
 
 export default function ProfilePage() {
     const { user, loading } = useAuth();
@@ -42,10 +43,11 @@ export default function ProfilePage() {
                 </p>
 
                 <Tabs defaultValue="profile" className="w-full">
-                    <TabsList className="grid w-full grid-cols-3">
+                    <TabsList className="grid w-full grid-cols-4">
                         <TabsTrigger value="profile">Perfil</TabsTrigger>
                         <TabsTrigger value="preferences">Preferencias</TabsTrigger>
                         <TabsTrigger value="addresses">Direcciones</TabsTrigger>
+                        <TabsTrigger value="orders">Mis Pedidos</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="profile" className="mt-6">
@@ -58,6 +60,10 @@ export default function ProfilePage() {
 
                     <TabsContent value="addresses" className="mt-6">
                         <AddressManager />
+                    </TabsContent>
+
+                    <TabsContent value="orders" className="mt-6">
+                        <MyOrders />
                     </TabsContent>
                 </Tabs>
             </div>

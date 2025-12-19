@@ -13,6 +13,8 @@ import { MapPin, Phone, User, Truck, CreditCard } from 'lucide-react';
 import DynamicLocationPicker from './DynamicLocationPicker';
 import { useToast } from '@/hooks/use-toast';
 import { useCart } from '@/context/CartProvider';
+import { useAuth } from '@/context/AuthContext';
+import { ordersApi } from '@/lib/api/orders';
 import { useRouter } from 'next/navigation';
 
 const checkoutSchema = z.object({
@@ -28,6 +30,7 @@ type CheckoutFormData = z.infer<typeof checkoutSchema>;
 export default function CheckoutForm() {
     const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
     const { cartItems, cartTotal, clearCart } = useCart();
+    const { token } = useAuth();
     const { toast } = useToast();
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -155,6 +158,24 @@ export default function CheckoutForm() {
         // If outside free zone -> Redirect to WhatsApp
         if (location && !isFreeShipping) {
             try {
+                // Attempt to create order in backend if logged in
+                if (token) {
+                    const orderData = {
+                        items: cartItems.map(item => ({
+                            productId: item.product.id,
+                            quantity: item.quantity
+                        })),
+                        status: 'pending_confirmation',
+                    };
+
+                    try {
+                        await ordersApi.create(token, orderData);
+                    } catch (error) {
+                        console.error('Error creating order in backend', error);
+                        // Continue to WhatsApp even if backend save fails, but warn?
+                    }
+                }
+
                 const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
                 const itemsList = cartItems.map(i => `- ${i.quantity}x ${i.product.name}`).join('\n');
                 const message = `Halo! 🌿 Quisiera hacer un pedido (Envío por acordar):\n\n` +
@@ -188,16 +209,25 @@ export default function CheckoutForm() {
 
         // Standard Order Creation (Internal)
         try {
+            if (!token) {
+                toast({
+                    variant: "destructive",
+                    title: "Inicio de sesión requerido",
+                    description: "Para completar pedidos estándar, por favor inicia sesión.",
+                });
+                setIsSubmitting(false);
+                return;
+            }
+
             const orderData = {
-                ...data,
-                location,
-                items: cartItems,
-                total: cartTotal,
-                date: new Date().toISOString()
+                items: cartItems.map(item => ({
+                    productId: item.product.id,
+                    quantity: item.quantity
+                })),
+                status: 'pending', // Free shipping orders are pending fulfillment
             };
 
-            console.log('Order Data:', orderData);
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            await ordersApi.create(token, orderData);
 
             clearCart();
             localStorage.removeItem('checkout_form_data');

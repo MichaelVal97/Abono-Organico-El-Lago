@@ -64,7 +64,7 @@ export default function AdminDashboard() {
         },
         {
             title: 'Ingresos',
-            value: `$${stats.revenue.toLocaleString()}`,
+            value: `$${(stats.revenue || 0).toLocaleString()}`,
             icon: DollarSign,
             description: 'Ingresos totales',
         },

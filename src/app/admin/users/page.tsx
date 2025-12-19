@@ -17,11 +17,23 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, Shield, ShieldAlert, User as UserIcon } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { MoreHorizontal, Shield, ShieldAlert, User as UserIcon, Loader2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { usersApi } from '@/lib/api/users';
+import { useToast } from '@/hooks/use-toast';
 
 interface User {
     id: string;
@@ -32,11 +44,27 @@ interface User {
     isActive: boolean;
     avatar?: string;
     createdAt: string;
+    preferences?: any;
+    addresses?: any[];
 }
 
 export default function UsersPage() {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
+    const { toast } = useToast();
+
+    // Edit State
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+    const [saving, setSaving] = useState(false);
+
+    // Form Data
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        role: 'user' as 'user' | 'admin',
+    });
 
     useEffect(() => {
         fetchUsers();
@@ -44,17 +72,74 @@ export default function UsersPage() {
 
     const fetchUsers = async () => {
         try {
-            // Get token for API call
-            const token = localStorage.getItem('abono-lago-token');
-            if (!token) return;
-
             const data = await usersApi.getAll();
             setUsers(data);
         } catch (error) {
             console.error('Error fetching users:', error);
-            // Fallback empty or error toast could be added here
+            toast({
+                title: "Error",
+                description: "No se pudieron cargar los usuarios",
+                variant: "destructive"
+            });
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleEditClick = (user: User) => {
+        setSelectedUser(user);
+        setFormData({
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: user.role,
+        });
+        setIsEditOpen(true);
+    };
+
+    const handleDetailsClick = async (user: User) => {
+        try {
+            // Fetch full details if needed (e.g. addresses)
+            // For now we use what we have, but could call usersApi.getAdminProfile(user.id) if we created it
+            setSelectedUser(user);
+            setIsDetailsOpen(true);
+        } catch (e) {
+            // handle error
+        }
+    };
+
+    const handleSave = async () => {
+        if (!selectedUser) return;
+        setSaving(true);
+        try {
+            // Update Role
+            if (formData.role !== selectedUser.role) {
+                await usersApi.updateRole(selectedUser.id, formData.role);
+            }
+
+            // Update Info
+            if (formData.firstName !== selectedUser.firstName || formData.lastName !== selectedUser.lastName) {
+                await usersApi.updateAdmin(selectedUser.id, {
+                    firstName: formData.firstName,
+                    lastName: formData.lastName
+                });
+            }
+
+            toast({
+                title: "Usuario actualizado",
+                description: "Los cambios han sido guardados exitosamente."
+            });
+
+            await fetchUsers(); // Refresh list
+            setIsEditOpen(false);
+        } catch (error) {
+            console.error(error);
+            toast({
+                title: "Error",
+                description: "No se pudieron guardar los cambios",
+                variant: "destructive"
+            });
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -71,7 +156,6 @@ export default function UsersPage() {
                         Gestiona los usuarios del sistema.
                     </p>
                 </div>
-                <Button>Añadir Usuario</Button>
             </div>
 
             <div className="rounded-md border">
@@ -145,11 +229,11 @@ export default function UsersPage() {
                                                     Copiar ID
                                                 </DropdownMenuItem>
                                                 <DropdownMenuSeparator />
-                                                <DropdownMenuItem>Ver detalles</DropdownMenuItem>
-                                                <DropdownMenuItem>Editar usuario</DropdownMenuItem>
-                                                <DropdownMenuSeparator />
-                                                <DropdownMenuItem className="text-red-600">
-                                                    Eliminar usuario
+                                                <DropdownMenuItem onClick={() => handleDetailsClick(user)}>
+                                                    Ver detalles
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => handleEditClick(user)}>
+                                                    Editar usuario
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
@@ -160,6 +244,106 @@ export default function UsersPage() {
                     </TableBody>
                 </Table>
             </div>
+
+            {/* Edit User Dialog */}
+            <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Editar Usuario</DialogTitle>
+                        <DialogDescription>
+                            Modifica la información y el rol del usuario.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="first-name">Nombre</Label>
+                                <Input
+                                    id="first-name"
+                                    value={formData.firstName}
+                                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="last-name">Apellido</Label>
+                                <Input
+                                    id="last-name"
+                                    value={formData.lastName}
+                                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="role">Rol</Label>
+                            <Select
+                                value={formData.role}
+                                onValueChange={(val: 'user' | 'admin') => setFormData({ ...formData, role: val })}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Selecciona un rol" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="user">Usuario Común</SelectItem>
+                                    <SelectItem value="admin">Administrador</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsEditOpen(false)}>Cancelar</Button>
+                        <Button onClick={handleSave} disabled={saving}>
+                            {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            Guardar Cambios
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* User Details Dialog */}
+            <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Detalles del Usuario</DialogTitle>
+                    </DialogHeader>
+
+                    {selectedUser && (
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-4 p-4 border rounded-lg bg-muted/50">
+                                <Avatar className="h-16 w-16">
+                                    <AvatarImage src={selectedUser.avatar} />
+                                    <AvatarFallback className="text-lg">
+                                        {getInitials(selectedUser.firstName, selectedUser.lastName)}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <div>
+                                    <h3 className="font-bold text-lg">{selectedUser.firstName} {selectedUser.lastName}</h3>
+                                    <p className="text-sm text-muted-foreground">{selectedUser.email}</p>
+                                    <div className="flex gap-2 mt-2">
+                                        <Badge>{selectedUser.role}</Badge>
+                                        <Badge variant={selectedUser.isActive ? "outline" : "destructive"}>
+                                            {selectedUser.isActive ? "Activo" : "Inactivo"}
+                                        </Badge>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <Label className="text-muted-foreground">ID</Label>
+                                    <p className="font-mono">{selectedUser.id}</p>
+                                </div>
+                                <div>
+                                    <Label className="text-muted-foreground">Fecha de Registro</Label>
+                                    <p>{new Date(selectedUser.createdAt).toLocaleString()}</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
