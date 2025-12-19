@@ -18,13 +18,15 @@ import {
 } from "@/components/ui/sheet"
 
 
+
 const navLinks = [
   { href: '/', label: 'Inicio' },
   { href: '/#products', label: 'Productos' },
+  { href: '/reviews', label: 'Reseñas' },
   { href: '/about', label: 'Nosotros' },
   { href: '/process', label: 'Proceso' },
+  { href: '/results', label: 'Resultados' },
   { href: '/contact', label: 'Contáctanos' },
-  { href: '/admin/feedback', label: 'Feedback AI' },
 ];
 
 export default function Navbar() {

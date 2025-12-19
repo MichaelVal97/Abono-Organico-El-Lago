@@ -29,6 +29,7 @@ export declare class UsersService {
         updatedAt: Date;
         preferences: UserPreferences;
         addresses: UserAddress[];
+        orders: import("../orders/entities/order.entity").Order[];
     }[]>;
     getProfile(userId: string): Promise<{
         id: string;
@@ -46,6 +47,7 @@ export declare class UsersService {
         updatedAt: Date;
         preferences: UserPreferences;
         addresses: UserAddress[];
+        orders: import("../orders/entities/order.entity").Order[];
     }>;
     updateProfile(userId: string, updateUserDto: UpdateUserDto): Promise<{
         id: string;
@@ -63,6 +65,7 @@ export declare class UsersService {
         updatedAt: Date;
         preferences: UserPreferences;
         addresses: UserAddress[];
+        orders: import("../orders/entities/order.entity").Order[];
     }>;
     updateAvatar(userId: string, avatarUrl: string): Promise<{
         id: string;
@@ -80,6 +83,7 @@ export declare class UsersService {
         updatedAt: Date;
         preferences: UserPreferences;
         addresses: UserAddress[];
+        orders: import("../orders/entities/order.entity").Order[];
     }>;
     deleteAvatar(userId: string): Promise<{
         id: string;
@@ -97,6 +101,7 @@ export declare class UsersService {
         updatedAt: Date;
         preferences: UserPreferences;
         addresses: UserAddress[];
+        orders: import("../orders/entities/order.entity").Order[];
     }>;
     getPreferences(userId: string): Promise<UserPreferences>;
     updatePreferences(userId: string, updatePreferencesDto: UpdatePreferencesDto): Promise<UserPreferences>;
@@ -123,5 +128,6 @@ export declare class UsersService {
         updatedAt: Date;
         preferences: UserPreferences;
         addresses: UserAddress[];
+        orders: import("../orders/entities/order.entity").Order[];
     }>;
 }

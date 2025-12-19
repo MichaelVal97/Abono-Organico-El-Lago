@@ -64,6 +64,17 @@ export class CreateProductDto {
     imageHint: string;
 
     @ApiProperty({
+        description: 'Galería de imágenes adicionales',
+        example: ['url1.jpg', 'url2.jpg'],
+        required: false,
+        type: [String],
+    })
+    @IsOptional()
+    @IsArray()
+    @IsString({ each: true })
+    images?: string[];
+
+    @ApiProperty({
         description: 'Categoría del producto',
         example: 'PLAN DE FERTILIZACIÓN',
         required: false,

@@ -23,6 +23,7 @@ export declare class AuthController {
             updatedAt: Date;
             preferences: import("./entities/user-preferences.entity").UserPreferences;
             addresses: import("./entities/user-address.entity").UserAddress[];
+            orders: import("../orders/entities/order.entity").Order[];
         };
         token: string;
     }>;
@@ -43,6 +44,7 @@ export declare class AuthController {
             updatedAt: Date;
             preferences: import("./entities/user-preferences.entity").UserPreferences;
             addresses: import("./entities/user-address.entity").UserAddress[];
+            orders: import("../orders/entities/order.entity").Order[];
         };
         token: string;
     }>;

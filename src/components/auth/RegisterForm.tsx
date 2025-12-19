@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -18,6 +19,7 @@ export function RegisterForm() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
+  const { toast } = useToast();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,9 +29,25 @@ export function RegisterForm() {
 
     try {
       await register(email, password, firstName, lastName);
-      router.push('/profile');
+
+      // Mostrar toast de bienvenida
+      toast({
+        title: "¡Cuenta creada exitosamente!",
+        description: `Bienvenido ${firstName}, tu cuenta ha sido creada.`,
+      });
+
+      // Redirigir a la página de inicio
+      setTimeout(() => {
+        router.push('/');
+      }, 500);
     } catch (err: any) {
-      setError(err.message || 'Error al registrar usuario');
+      const errorMessage = err.message || 'Error al registrar usuario';
+      setError(errorMessage);
+      toast({
+        variant: "destructive",
+        title: "Error al crear cuenta",
+        description: errorMessage,
+      });
     } finally {
       setLoading(false);
     }

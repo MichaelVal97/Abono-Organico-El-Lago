@@ -19,8 +19,10 @@ const typeorm_2 = require("typeorm");
 const product_entity_1 = require("./entities/product.entity");
 let ProductsService = class ProductsService {
     productRepository;
-    constructor(productRepository) {
+    dataSource;
+    constructor(productRepository, dataSource) {
         this.productRepository = productRepository;
+        this.dataSource = dataSource;
     }
     async create(createProductDto) {
         const product = this.productRepository.create(createProductDto);
@@ -45,78 +47,68 @@ let ProductsService = class ProductsService {
     }
     async remove(id) {
         const product = await this.findOne(id);
-        await this.productRepository.remove(product);
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+        try {
+            await queryRunner.query('DELETE FROM "reviews" WHERE "productId" = $1', [id]);
+            await queryRunner.query('DELETE FROM "order_items" WHERE "productId" = $1', [id]);
+            await queryRunner.manager.remove(product);
+            await queryRunner.commitTransaction();
+        }
+        catch (err) {
+            await queryRunner.rollbackTransaction();
+            throw err;
+        }
+        finally {
+            await queryRunner.release();
+        }
     }
     async seed() {
-        const count = await this.productRepository.count();
-        if (count > 0) {
-            throw new Error('Ya existen productos en la base de datos. No se puede ejecutar seed.');
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+        try {
+            await queryRunner.query('DELETE FROM "order_items"');
+            await queryRunner.query('DELETE FROM "orders"');
+            await queryRunner.query('DELETE FROM "reviews"');
+            await queryRunner.query('DELETE FROM "products"');
+            await queryRunner.commitTransaction();
+        }
+        catch (err) {
+            console.error('Error clearing database:', err);
+            await queryRunner.rollbackTransaction();
+            throw err;
+        }
+        finally {
+            await queryRunner.release();
         }
         const seedProducts = [
             {
-                name: 'Estiércol de Vaca',
-                description: 'Estiércol de vaca de alta calidad, perfecto para enriquecer el suelo de su jardín y huerto. 100% orgánico y compostado.',
-                price: 15.99,
+                name: 'Bulto de 50 kg de compost',
+                description: 'Abono orgánico de alta calidad en presentación de 50kg. Ideal para todo tipo de cultivos.',
+                price: 25000,
                 stock: 100,
-                imageUrl: 'https://picsum.photos/seed/estiercol-vaca/400/400',
-                imageHint: 'organic cow manure fertilizer in a burlap sack',
-                category: 'PLAN DE FERTILIZACIÓN',
-                tags: ['ABONO', 'FERTILIZACIÓN', 'SUELOS'],
+                imageUrl: 'https://i.postimg.cc/XVjTxCQq/Whats-App-Image-2025-11-27-at-13-14-22-(2).jpg',
+                imageHint: 'bulto abono compost 50kg',
+                category: 'ABONOS',
+                tags: ['ABONO', 'FERTILIZACIÓN', 'ORGÁNICO', '50KG'],
                 priceRange: '1 Bulto - 50Kg',
-            },
-            {
-                name: 'Estiércol de Caballo',
-                description: 'Potente estiércol de caballo, ideal para plantas que requieren un alto contenido de nitrógeno. Cuidadosamente seleccionado.',
-                price: 18.5,
-                stock: 75,
-                imageUrl: 'https://picsum.photos/seed/estiercol-caballo/400/400',
-                imageHint: 'horse manure fertilizer organic farming',
-                category: 'PLAN DE FERTILIZACIÓN',
-                tags: ['ABONO', 'FERTILIZACIÓN', 'NITRÓGENO'],
-                priceRange: '1 Bulto - 50Kg',
-            },
-            {
-                name: 'Estiércol de Gallina (Gallinaza)',
-                description: 'Gallinaza rica en nutrientes, una opción excelente para acelerar el crecimiento de sus cultivos. Olor controlado.',
-                price: 12.0,
-                stock: 120,
-                imageUrl: 'https://picsum.photos/seed/estiercol-gallina/400/400',
-                imageHint: 'chicken manure fertilizer poultry compost',
-                category: 'PLAN DE FERTILIZACIÓN',
-                tags: ['ABONO', 'FERTILIZACIÓN', 'CULTIVOS'],
-                priceRange: '1 Bulto - 50Kg',
-            },
-            {
-                name: 'Humus de Lombriz',
-                description: 'El "oro negro" de la jardinería. Humus de lombriz puro para una fertilización natural y efectiva, mejorando la estructura del suelo.',
-                price: 25.0,
-                stock: 50,
-                imageUrl: 'https://picsum.photos/seed/humus-lombriz/400/400',
-                imageHint: 'worm castings vermicompost humus organic',
-                category: 'PLAN DE FERTILIZACIÓN',
-                tags: ['ABONO', 'HUMUS', 'ORGÁNICO'],
-                priceRange: '1 Bulto - 50Kg',
-            },
-            {
-                name: 'Compost Orgánico Premium',
-                description: 'Mezcla de compost premium, balanceado para todo tipo de plantas. Enriquece la vida microbiana de tu tierra.',
-                price: 20.0,
-                stock: 80,
-                imageUrl: 'https://picsum.photos/seed/compost-organico/400/400',
-                imageHint: 'premium organic compost soil amendment',
-                category: 'PLAN DE FERTILIZACIÓN',
-                tags: ['COMPOST', 'FERTILIZACIÓN', 'PREMIUM'],
-                priceRange: '1 Bulto - 50Kg',
+                images: [
+                    'https://i.postimg.cc/XVjTxCQq/Whats-App-Image-2025-11-27-at-13-14-22-(2).jpg',
+                    'https://i.postimg.cc/69WDzvYQ/Whats-App-Image-2025-11-27-at-13-14-21.jpg'
+                ]
             },
         ];
-        const products = this.productRepository.create(seedProducts);
-        return await this.productRepository.save(products);
+        const newProducts = this.productRepository.create(seedProducts);
+        return await this.productRepository.save(newProducts);
     }
 };
 exports.ProductsService = ProductsService;
 exports.ProductsService = ProductsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(product_entity_1.Product)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.DataSource])
 ], ProductsService);
 //# sourceMappingURL=products.service.js.map

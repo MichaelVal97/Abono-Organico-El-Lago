@@ -12,6 +12,7 @@ type CartContextType = {
   clearCart: () => void;
   cartCount: number;
   cartTotal: number;
+  isInitialized: boolean;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -91,6 +92,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         clearCart,
         cartCount,
         cartTotal,
+        isInitialized,
       }}
     >
       {children}

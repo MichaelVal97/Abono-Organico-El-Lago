@@ -19,6 +19,7 @@ class CreateProductDto {
     stock;
     imageUrl;
     imageHint;
+    images;
     category;
     tags;
     priceRange;
@@ -81,6 +82,18 @@ __decorate([
     (0, class_validator_1.MaxLength)(255),
     __metadata("design:type", String)
 ], CreateProductDto.prototype, "imageHint", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Galería de imágenes adicionales',
+        example: ['url1.jpg', 'url2.jpg'],
+        required: false,
+        type: [String],
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsString)({ each: true }),
+    __metadata("design:type", Array)
+], CreateProductDto.prototype, "images", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
         description: 'Categoría del producto',

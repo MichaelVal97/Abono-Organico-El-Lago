@@ -21,7 +21,7 @@ import { Button } from '@/components/ui/button';
 import { MoreHorizontal, Shield, ShieldAlert, User as UserIcon } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { api } from '@/lib/api';
+import { usersApi } from '@/lib/api/users';
 
 interface User {
     id: string;
@@ -44,33 +44,15 @@ export default function UsersPage() {
 
     const fetchUsers = async () => {
         try {
-            // En una implementación real, llamaríamos a la API
-            // const data = await api.admin.getUsers();
+            // Get token for API call
+            const token = localStorage.getItem('abono-lago-token');
+            if (!token) return;
 
-            // Datos simulados por ahora
-            const mockUsers: User[] = [
-                {
-                    id: '1',
-                    email: 'admin@example.com',
-                    firstName: 'Admin',
-                    lastName: 'User',
-                    role: 'admin',
-                    isActive: true,
-                    createdAt: new Date().toISOString(),
-                },
-                {
-                    id: '2',
-                    email: 'user@example.com',
-                    firstName: 'Regular',
-                    lastName: 'User',
-                    role: 'user',
-                    isActive: true,
-                    createdAt: new Date().toISOString(),
-                },
-            ];
-            setUsers(mockUsers);
+            const data = await usersApi.getAll();
+            setUsers(data);
         } catch (error) {
             console.error('Error fetching users:', error);
+            // Fallback empty or error toast could be added here
         } finally {
             setLoading(false);
         }

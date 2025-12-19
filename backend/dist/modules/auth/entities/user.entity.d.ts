@@ -1,5 +1,6 @@
 import { UserPreferences } from './user-preferences.entity';
 import { UserAddress } from './user-address.entity';
+import { Order } from '../../orders/entities/order.entity';
 export declare class User {
     id: string;
     email: string;
@@ -17,4 +18,5 @@ export declare class User {
     updatedAt: Date;
     preferences: UserPreferences;
     addresses: UserAddress[];
+    orders: Order[];
 }

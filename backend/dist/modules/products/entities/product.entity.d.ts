@@ -6,9 +6,11 @@ export declare class Product {
     stock: number;
     imageUrl: string;
     imageHint: string;
+    images: string[];
     category: string;
     tags: string[];
     priceRange: string;
+    reviews: any[];
     createdAt: Date;
     updatedAt: Date;
 }

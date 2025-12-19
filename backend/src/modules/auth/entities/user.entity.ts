@@ -10,6 +10,7 @@ import {
 import { Exclude } from 'class-transformer';
 import { UserPreferences } from './user-preferences.entity';
 import { UserAddress } from './user-address.entity';
+import { Order } from '../../orders/entities/order.entity';
 
 @Entity('users')
 export class User {
@@ -66,4 +67,7 @@ export class User {
         cascade: true,
     })
     addresses: UserAddress[];
+
+    @OneToMany(() => Order, (order) => order.user)
+    orders: Order[];
 }

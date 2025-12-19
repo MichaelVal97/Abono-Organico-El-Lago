@@ -65,7 +65,9 @@ export default function CartView() {
             </p>
           </CardContent>
           <CardFooter className="flex-col gap-2">
-            <Button className="w-full">Proceder al Pago</Button>
+            <Button className="w-full" asChild>
+              <Link href="/checkout">Proceder al Pago</Link>
+            </Button>
             <Button variant="ghost" className="w-full text-destructive hover:text-destructive" onClick={clearCart}>
               Vaciar Carrito
             </Button>

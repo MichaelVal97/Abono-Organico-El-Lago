@@ -5,7 +5,7 @@ export type Product = {
   price: number;
   stock: number;
   imageUrl: string;
-  imageHint: string;
+  imageHint?: string;
   category?: string;
   tags?: string[];
   priceRange?: string;

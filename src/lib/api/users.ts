@@ -221,4 +221,18 @@ export const usersApi = {
 
         return response.json();
     },
+    async getAll(): Promise<any[]> {
+        const token = getAuthToken();
+        const response = await fetch(`${API_URL}/users`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Error al obtener usuarios');
+        }
+
+        return response.json();
+    },
 };

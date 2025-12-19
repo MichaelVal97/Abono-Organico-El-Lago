@@ -14,6 +14,7 @@ const typeorm_1 = require("typeorm");
 const class_transformer_1 = require("class-transformer");
 const user_preferences_entity_1 = require("./user-preferences.entity");
 const user_address_entity_1 = require("./user-address.entity");
+const order_entity_1 = require("../../orders/entities/order.entity");
 let User = class User {
     id;
     email;
@@ -31,6 +32,7 @@ let User = class User {
     updatedAt;
     preferences;
     addresses;
+    orders;
 };
 exports.User = User;
 __decorate([
@@ -103,6 +105,10 @@ __decorate([
     }),
     __metadata("design:type", Array)
 ], User.prototype, "addresses", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => order_entity_1.Order, (order) => order.user),
+    __metadata("design:type", Array)
+], User.prototype, "orders", void 0);
 exports.User = User = __decorate([
     (0, typeorm_1.Entity)('users')
 ], User);

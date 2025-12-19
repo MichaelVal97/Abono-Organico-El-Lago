@@ -53,6 +53,30 @@ export default function HomePage() {
       <ProductList />
       <ContactSection />
       <LocationMap />
+
+      {/* Our Clients Section */}
+      <section className="container py-12">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">
+            Nuestros Clientes
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Empresas que confían en la calidad de nuestro abono orgánico
+          </p>
+        </div>
+
+        <div className="flex justify-center">
+          <div className="relative w-48 h-48 md:w-64 md:h-64 rounded-lg overflow-hidden shadow-lg border-2 border-border hover:shadow-xl transition-shadow">
+            <Image
+              src="https://i.postimg.cc/Y0xBXDvL/cafe-h.png"
+              alt="Cliente - Café"
+              fill
+              className="object-contain p-4 bg-white"
+              sizes="(max-width: 768px) 192px, 256px"
+            />
+          </div>
+        </div>
+      </section>
     </>
   );
 }

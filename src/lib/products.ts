@@ -8,7 +8,7 @@ const getImageUrl = (id: string) => {
 
 export const products: Product[] = [
   {
-    id: '1',
+    id: 'dd223092-e575-4f59-a2fe-443c19f236d7',
     name: 'Bulto de 50 kg de compost',
     description: 'Abono orgánico de alta calidad en presentación de 50kg. Ideal para todo tipo de cultivos, mejorando la estructura del suelo y aportando nutrientes esenciales.',
     price: 25000,

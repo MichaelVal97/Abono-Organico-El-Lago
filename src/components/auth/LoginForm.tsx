@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -16,6 +17,7 @@ export function LoginForm() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -25,17 +27,31 @@ export function LoginForm() {
     setLoading(true);
 
     try {
-      const user = await login(email, password);
+      await login(email, password);
 
-      if (email === 'abonoellago@gmail.com') {
-        router.push('/admin');
-        return;
-      }
+      // Mostrar toast de bienvenida
+      toast({
+        title: "¡Bienvenido!",
+        description: "Has iniciado sesión exitosamente",
+      });
 
-      const redirect = searchParams.get('redirect') || '/';
-      router.push(redirect);
+      // Pequeño delay para que el usuario vea el toast
+      setTimeout(() => {
+        if (email === 'abonoellago@gmail.com' || email === 'admin@gmail.com') {
+          router.push('/admin');
+        } else {
+          const redirect = searchParams.get('redirect') || '/';
+          router.push(redirect);
+        }
+      }, 500);
     } catch (err: any) {
-      setError(err.message || 'Error al iniciar sesión');
+      const errorMessage = err.message || 'Error al iniciar sesión';
+      setError(errorMessage);
+      toast({
+        variant: "destructive",
+        title: "Error al iniciar sesión",
+        description: errorMessage,
+      });
     } finally {
       setLoading(false);
     }
@@ -91,7 +107,7 @@ export function LoginForm() {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-muted-foreground">
-                O continúa con
+                O inicia sesión con
               </span>
             </div>
           </div>

@@ -8,7 +8,8 @@ const path_1 = require("path");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.enableCors({
-        origin: ['http://localhost:9002', 'http://localhost:3000', 'http://localhost:3001'],
+        origin: true,
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
         credentials: true,
     });
     app.useStaticAssets((0, path_1.join)(__dirname, '..', 'uploads'), {

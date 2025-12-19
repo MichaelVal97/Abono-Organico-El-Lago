@@ -2,10 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, ShoppingBag, DollarSign, Activity } from 'lucide-react';
-import { api } from '@/lib/api';
+import { Users, ShoppingBag, DollarSign, Activity, AlertTriangle } from 'lucide-react';
+import { ordersApi } from '@/lib/api/orders';
+import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 export default function AdminDashboard() {
+    const { token } = useAuth();
+    const { toast } = useToast();
     const [stats, setStats] = useState({
         totalUsers: 0,
         activeUsers: 0,
@@ -16,52 +20,59 @@ export default function AdminDashboard() {
 
     useEffect(() => {
         const fetchStats = async () => {
+            if (!token) return;
             try {
-                // En una aplicación real, esto sería una sola llamada a la API
-                // Por ahora simularemos algunos datos o obtendremos lo que podamos
-                // const data = await api.admin.getStats();
+                // Fetch stats from backend
+                const orderStats = await ordersApi.getStats(token);
 
-                // Datos simulados por ahora hasta que el endpoint del backend esté completamente listo
+                // For users, we'd ideally have a usersApi.getStats() but we'll use placeholder or orders active users
+                // Assuming we want real user count eventually, but for now let's use what we have
+
                 setStats({
-                    totalUsers: 150,
-                    activeUsers: 120,
-                    totalOrders: 45,
-                    revenue: 12500,
+                    totalUsers: orderStats.totalUsers || 0,
+                    activeUsers: orderStats.activeUsers || 0,
+                    totalOrders: orderStats.totalOrders,
+                    revenue: orderStats.revenue,
                 });
             } catch (error) {
                 console.error('Error fetching stats:', error);
+                toast({
+                    title: 'Error',
+                    description: 'No se pudieron cargar las estadísticas.',
+                    variant: 'destructive',
+                });
             } finally {
                 setLoading(false);
             }
         };
 
         fetchStats();
-    }, []);
+    }, [token, toast]);
 
     const statCards = [
         {
-            title: 'Usuarios Totales',
-            value: stats.totalUsers,
+            title: 'Usuarios Activos',
+            value: stats.activeUsers,
             icon: Users,
-            description: `${stats.activeUsers} activos actualmente`,
+            description: 'Usuarios que han comprado',
         },
         {
-            title: 'Pedidos',
+            title: 'Pedidos Totales',
             value: stats.totalOrders,
             icon: ShoppingBag,
-            description: '+12% respecto al mes pasado',
+            description: 'Total histórico',
         },
         {
             title: 'Ingresos',
             value: `$${stats.revenue.toLocaleString()}`,
             icon: DollarSign,
-            description: '+8% respecto al mes pasado',
+            description: 'Ingresos totales',
         },
         {
-            title: 'Actividad',
-            value: '+573',
+            title: 'Estado del Sistema',
+            value: 'En Línea',
             icon: Activity,
-            description: '+201 desde la última hora',
+            description: 'Funcionando correctamente',
         },
     ];
 
@@ -70,7 +81,7 @@ export default function AdminDashboard() {
             <div>
                 <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
                 <p className="text-muted-foreground">
-                    Resumen general del estado de la tienda.
+                    Resumen general del estado de la tienda (Datos Reales).
                 </p>
             </div>
 
@@ -93,45 +104,17 @@ export default function AdminDashboard() {
                 ))}
             </div>
 
-            {/* Actividad reciente o gráficos podrían ir aquí */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <Card className="col-span-4">
-                    <CardHeader>
-                        <CardTitle>Resumen de Ventas</CardTitle>
-                    </CardHeader>
-                    <CardContent className="pl-2">
-                        <div className="h-[200px] flex items-center justify-center text-muted-foreground">
-                            Gráfico de ventas (Próximamente)
-                        </div>
-                    </CardContent>
-                </Card>
-                <Card className="col-span-3">
-                    <CardHeader>
-                        <CardTitle>Actividad Reciente</CardTitle>
+            <div className="grid gap-4 md:grid-cols-1">
+                <Card className="bg-yellow-50 dark:bg-yellow-900/10 border-yellow-200 dark:border-yellow-900">
+                    <CardHeader className="flex flex-row items-center gap-2">
+                        <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-500" />
+                        <CardTitle className="text-yellow-800 dark:text-yellow-500">Nota del Sistema</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="space-y-8">
-                            <div className="flex items-center">
-                                <div className="ml-4 space-y-1">
-                                    <p className="text-sm font-medium leading-none">
-                                        Nuevo usuario registrado
-                                    </p>
-                                    <p className="text-sm text-muted-foreground">
-                                        hace 5 minutos
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="flex items-center">
-                                <div className="ml-4 space-y-1">
-                                    <p className="text-sm font-medium leading-none">
-                                        Pedido #1234 completado
-                                    </p>
-                                    <p className="text-sm text-muted-foreground">
-                                        hace 15 minutos
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                        <p className="text-sm text-yellow-700 dark:text-yellow-400">
+                            El módulo de pedidos acaba de ser activado. El historial de ventas comienza desde 0 a partir de este momento.
+                            Las estadísticas se actualizarán automáticamente con cada nueva compra.
+                        </p>
                     </CardContent>
                 </Card>
             </div>

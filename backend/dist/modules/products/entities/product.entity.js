@@ -20,9 +20,11 @@ let Product = class Product {
     stock;
     imageUrl;
     imageHint;
+    images;
     category;
     tags;
     priceRange;
+    reviews;
     createdAt;
     updatedAt;
 };
@@ -85,6 +87,15 @@ __decorate([
 ], Product.prototype, "imageHint", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
+        description: 'Galería de imágenes adicionales',
+        example: ['url1.jpg', 'url2.jpg'],
+        type: [String],
+    }),
+    (0, typeorm_1.Column)('simple-array', { nullable: true }),
+    __metadata("design:type", Array)
+], Product.prototype, "images", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
         description: 'Categoría del producto',
         example: 'PLAN DE FERTILIZACIÓN',
     }),
@@ -108,6 +119,10 @@ __decorate([
     (0, typeorm_1.Column)({ length: 100, nullable: true }),
     __metadata("design:type", String)
 ], Product.prototype, "priceRange", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)('Review', 'product'),
+    __metadata("design:type", Array)
+], Product.prototype, "reviews", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
         description: 'Fecha de creación del registro',

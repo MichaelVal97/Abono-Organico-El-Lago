@@ -4,6 +4,7 @@ import {
     Column,
     CreateDateColumn,
     UpdateDateColumn,
+    OneToMany,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -60,6 +61,14 @@ export class Product {
     imageHint: string;
 
     @ApiProperty({
+        description: 'Galería de imágenes adicionales',
+        example: ['url1.jpg', 'url2.jpg'],
+        type: [String],
+    })
+    @Column('simple-array', { nullable: true })
+    images: string[];
+
+    @ApiProperty({
         description: 'Categoría del producto',
         example: 'PLAN DE FERTILIZACIÓN',
     })
@@ -80,6 +89,9 @@ export class Product {
     })
     @Column({ length: 100, nullable: true })
     priceRange: string;
+
+    @OneToMany('Review', 'product')
+    reviews: any[];
 
     @ApiProperty({
         description: 'Fecha de creación del registro',

@@ -47,10 +47,14 @@ export default function AboutPage() {
                 {/* Story Section */}
                 <div className="grid md:grid-cols-2 gap-12 items-center">
                     <div className="relative aspect-video md:aspect-square rounded-2xl overflow-hidden shadow-xl">
-                        {/* Placeholder for a team or farm image */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                            <span className="text-muted-foreground italic">Imagen de nuestro equipo o finca</span>
-                        </div>
+                        <Image
+                            src="https://i.postimg.cc/ZqQ750G2/Whats_App_Image_2025_11_27_at_12_15_19.jpg"
+                            alt="Nuestro equipo y finca - Abono Orgánico El Lago"
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                            quality={100}
+                        />
                     </div>
                     <div className="space-y-6">
                         <h2 className="text-3xl font-bold font-headline">Nuestra Historia</h2>

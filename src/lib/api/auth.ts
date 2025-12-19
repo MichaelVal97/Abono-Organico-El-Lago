@@ -21,7 +21,6 @@ export interface AuthResponse {
         phone?: string;
         dateOfBirth?: string;
         avatar?: string;
-        isActive: boolean;
         isEmailVerified: boolean;
         createdAt: string;
         updatedAt: string;

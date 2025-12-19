@@ -26,6 +26,7 @@ export declare class AuthService {
             updatedAt: Date;
             preferences: UserPreferences;
             addresses: import("./entities/user-address.entity").UserAddress[];
+            orders: import("../orders/entities/order.entity").Order[];
         };
         token: string;
     }>;
@@ -46,6 +47,7 @@ export declare class AuthService {
             updatedAt: Date;
             preferences: UserPreferences;
             addresses: import("./entities/user-address.entity").UserAddress[];
+            orders: import("../orders/entities/order.entity").Order[];
         };
         token: string;
     }>;
@@ -66,6 +68,7 @@ export declare class AuthService {
             updatedAt: Date;
             preferences: UserPreferences;
             addresses: import("./entities/user-address.entity").UserAddress[];
+            orders: import("../orders/entities/order.entity").Order[];
         };
         token: string;
     }>;

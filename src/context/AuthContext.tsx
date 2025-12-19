@@ -13,7 +13,6 @@ type User = {
   phone?: string;
   dateOfBirth?: string;
   avatar?: string;
-  isActive: boolean;
   isEmailVerified: boolean;
   createdAt: string;
   updatedAt: string;
@@ -29,6 +28,7 @@ type User = {
 
 type AuthContextType = {
   user: User | null;
+  token: string | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
@@ -103,6 +103,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const value = React.useMemo(() => ({
     user,
+    token: typeof window !== 'undefined' ? localStorage.getItem('abono-lago-token') : null, // Simplest way to expose current token
     loading,
     login,
     logout,

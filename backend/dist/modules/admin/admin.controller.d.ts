@@ -18,6 +18,7 @@ export declare class AdminController {
         updatedAt: Date;
         preferences: import("../auth/entities/user-preferences.entity").UserPreferences;
         addresses: import("../auth/entities/user-address.entity").UserAddress[];
+        orders: import("../orders/entities/order.entity").Order[];
     }[]>;
     getStats(): Promise<{
         totalUsers: number;
@@ -39,6 +40,7 @@ export declare class AdminController {
         updatedAt: Date;
         preferences: import("../auth/entities/user-preferences.entity").UserPreferences;
         addresses: import("../auth/entities/user-address.entity").UserAddress[];
+        orders: import("../orders/entities/order.entity").Order[];
     }>;
     getOrders(): Promise<{
         id: string;

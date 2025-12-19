@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,7 +11,8 @@ import {
     ShoppingBag,
     Settings,
     LogOut,
-    Menu
+    Menu,
+    Globe
 } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
@@ -20,7 +22,36 @@ export default function AdminLayout({
     children: React.ReactNode;
 }) {
     const pathname = usePathname();
-    const { logout } = useAuth();
+    const { logout, user, loading } = useAuth();
+    const router = useRouter();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    useEffect(() => {
+        if (mounted && !loading) {
+            if (!user) {
+                router.push('/login');
+            } else if (user.role !== 'admin' && user.email !== 'abonoellago@gmail.com' && user.email !== 'admin@gmail.com' && user.email !== 'stretch394@gmail.com') {
+                router.push('/');
+            }
+        }
+    }, [user, loading, router, mounted]);
+
+    // Prevent hydration mismatch by not rendering until mounted
+    if (!mounted) {
+        return null;
+    }
+
+    if (loading) {
+        return <div className="flex items-center justify-center min-h-screen">Cargando...</div>;
+    }
+
+    if (!user || (user.role !== 'admin' && user.email !== 'abonoellago@gmail.com' && user.email !== 'admin@gmail.com' && user.email !== 'stretch394@gmail.com')) {
+        return null; // Don't render protected content while redirecting
+    }
 
     const routes = [
         {
@@ -48,10 +79,10 @@ export default function AdminLayout({
             active: pathname === '/admin/orders',
         },
         {
-            href: '/admin/settings',
-            label: 'Configuración',
-            icon: Settings,
-            active: pathname === '/admin/settings',
+            href: '/',
+            label: 'Ver Página',
+            icon: Globe,
+            active: false,
         },
     ];
 

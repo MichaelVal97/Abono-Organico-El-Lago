@@ -73,18 +73,19 @@ let UsersService = class UsersService {
                 const adminUser = this.userRepository.create({
                     email: adminEmail,
                     password: hashedPassword,
-                    fullName: 'Admin Abono El Lago',
+                    firstName: 'Admin',
+                    lastName: 'Abono El Lago',
                     isActive: true,
                     role: 'admin',
-                    roles: ['admin'],
                 });
                 const preferences = this.preferencesRepository.create({
-                    notifications: true,
-                    newsletter: true
+                    emailNotifications: true,
+                    pushNotifications: true,
+                    newsletter: true,
                 });
-                await this.preferencesRepository.save(preferences);
-                adminUser.preferences = preferences;
                 await this.userRepository.save(adminUser);
+                preferences.user = adminUser;
+                await this.preferencesRepository.save(preferences);
                 console.log('Admin User Created Successfully');
             }
         }

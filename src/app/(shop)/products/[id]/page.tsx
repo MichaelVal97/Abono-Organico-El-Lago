@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, use } from 'react';
+import { useState, use, useEffect } from 'react';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { ShoppingCart, CheckCircle, Package } from 'lucide-react';
-import { products } from '@/lib/products';
 import { useCart } from '@/context/CartProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -13,16 +12,76 @@ import { Separator } from '@/components/ui/separator';
 import QuantitySelector from '@/components/cart/QuantitySelector';
 import { useToast } from '@/hooks/use-toast';
 import { formatPrice } from '@/lib/utils';
+import { ReviewStatsDisplay } from '@/components/reviews/ReviewStatsDisplay';
+import { ReviewForm } from '@/components/reviews/ReviewForm';
+import { ReviewList } from '@/components/reviews/ReviewList';
+import { reviewsApi, Review } from '@/lib/api/reviews';
+import { productsApi, Product } from '@/lib/api/products';
+import { useAuth } from '@/context/AuthContext';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [reviewsRefreshTrigger, setReviewsRefreshTrigger] = useState(0);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
   const { addToCart } = useCart();
   const { toast } = useToast();
+  const { user } = useAuth();
 
-  const product = products.find(p => p.id === id);
+  const userHasReviewed = reviews.some(review => review.user?.id === user?.id);
+
+  // Load product data
+  useEffect(() => {
+    const loadProduct = async () => {
+      try {
+        const data = await productsApi.getOne(id);
+        setProduct(data);
+      } catch (error) {
+        console.error('Error loading product:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadProduct();
+  }, [id]);
+
+  // Load reviews (existing logic)
+  useEffect(() => {
+    const loadReviews = async () => {
+      try {
+        setReviewsLoading(true);
+        const data = await reviewsApi.getByProduct(id);
+        setReviews(data);
+      } catch (err) {
+        console.error('Error loading reviews:', err);
+      } finally {
+        setReviewsLoading(false);
+      }
+    };
+
+    loadReviews();
+  }, [id, reviewsRefreshTrigger]);
+
+  if (loading) {
+    return (
+      <div className="container py-12 space-y-8">
+        <div className="grid md:grid-cols-2 gap-8">
+          <Skeleton className="h-[500px] w-full" />
+          <div className="space-y-4">
+            <Skeleton className="h-10 w-3/4" />
+            <Skeleton className="h-6 w-1/4" />
+            <Skeleton className="h-32 w-full" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!product) {
     notFound();
@@ -31,9 +90,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   // Ensure we have a valid image to show (state > first gallery image > main image)
   const currentImage = selectedImage || (product.images && product.images.length > 0 ? product.images[0] : product.imageUrl);
 
-  // Combine all available images for the gallery (prevent duplicates if needed, or just use product.images if robust)
-  // Assuming product.images replaces the single imageUrl as the source of truth for this feature, 
-  // but falling back to imageUrl if images is empty.
+  // Combine all available images for the gallery
   const galleryImages = product.images && product.images.length > 0 ? product.images : [product.imageUrl];
 
   const handleAddToCart = () => {
@@ -46,8 +103,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     setTimeout(() => setAddedToCart(false), 2000);
   };
 
+  const handleReviewCreated = () => {
+    setReviewsRefreshTrigger(prev => prev + 1);
+  };
+
   return (
-    <div className="container py-8 md:py-12">
+    <div className="container py-8 md:py-12 space-y-12">
       <Card className="overflow-hidden">
         <CardContent className="p-0">
           <div className="grid md:grid-cols-2 gap-0">
@@ -113,6 +174,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     {/* Discount Label */}
                     <Badge variant="destructive" className="w-fit text-sm px-3 py-1">
                       10% de descuento en pedidos mayores a 100 bultos
+                    </Badge>
+
+                    {/* Free Shipping Label */}
+                    <Badge variant="secondary" className="w-fit text-sm px-3 py-1 bg-green-100 text-green-800 hover:bg-green-200 border-green-200 hidden md:inline-flex">
+                      Envío Gratis {'>'} 200 Unidades
                     </Badge>
                   </div>
                 </div>
@@ -205,6 +271,32 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           </div>
         </CardContent>
       </Card>
+
+      {/* Reviews Section */}
+      <div className="space-y-8">
+        <div>
+          <h2 className="text-3xl font-bold font-headline mb-2">Reseñas de clientes</h2>
+          <p className="text-muted-foreground">
+            Descubre lo que nuestros clientes opinan sobre este producto
+          </p>
+        </div>
+
+        {/* Review Stats */}
+        <ReviewStatsDisplay productId={id} refreshTrigger={reviewsRefreshTrigger} />
+
+        {/* Review Form (only if user hasn't reviewed yet) */}
+        {!userHasReviewed && (
+          <ReviewForm productId={id} onReviewCreated={handleReviewCreated} />
+        )}
+
+        {/* Review List */}
+        <ReviewList
+          reviews={reviews}
+          productId={id}
+          onReviewDeleted={handleReviewCreated}
+          onReviewUpdated={handleReviewCreated}
+        />
+      </div>
     </div>
   );
 }

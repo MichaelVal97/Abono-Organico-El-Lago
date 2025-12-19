@@ -22,6 +22,7 @@ export declare class UsersController {
         updatedAt: Date;
         preferences: import("../auth/entities/user-preferences.entity").UserPreferences;
         addresses: import("../auth/entities/user-address.entity").UserAddress[];
+        orders: import("../orders/entities/order.entity").Order[];
     }>;
     updateProfile(req: any, updateUserDto: UpdateUserDto): Promise<{
         id: string;
@@ -39,6 +40,7 @@ export declare class UsersController {
         updatedAt: Date;
         preferences: import("../auth/entities/user-preferences.entity").UserPreferences;
         addresses: import("../auth/entities/user-address.entity").UserAddress[];
+        orders: import("../orders/entities/order.entity").Order[];
     }>;
     uploadAvatar(req: any, file: Express.Multer.File): Promise<{
         id: string;
@@ -56,6 +58,7 @@ export declare class UsersController {
         updatedAt: Date;
         preferences: import("../auth/entities/user-preferences.entity").UserPreferences;
         addresses: import("../auth/entities/user-address.entity").UserAddress[];
+        orders: import("../orders/entities/order.entity").Order[];
     }>;
     deleteAvatar(req: any): Promise<{
         id: string;
@@ -73,6 +76,7 @@ export declare class UsersController {
         updatedAt: Date;
         preferences: import("../auth/entities/user-preferences.entity").UserPreferences;
         addresses: import("../auth/entities/user-address.entity").UserAddress[];
+        orders: import("../orders/entities/order.entity").Order[];
     }>;
     getPreferences(req: any): Promise<import("../auth/entities/user-preferences.entity").UserPreferences>;
     updatePreferences(req: any, updatePreferencesDto: UpdatePreferencesDto): Promise<import("../auth/entities/user-preferences.entity").UserPreferences>;
