@@ -19,15 +19,16 @@ let RolesGuard = class RolesGuard {
         this.reflector = reflector;
     }
     canActivate(context) {
-        const requiredRoles = this.reflector.getAllAndOverride(roles_decorator_1.ROLES_KEY, [
-            context.getHandler(),
-            context.getClass(),
-        ]);
+        const requiredRoles = this.reflector.getAllAndOverride(roles_decorator_1.ROLES_KEY, [context.getHandler(), context.getClass()]);
         if (!requiredRoles) {
             return true;
         }
         const { user } = context.switchToHttp().getRequest();
-        const adminEmails = ['abonoellago@gmail.com', 'admin@gmail.com', 'stretch394@gmail.com'];
+        const adminEmails = [
+            'abonoellago@gmail.com',
+            'admin@gmail.com',
+            'stretch394@gmail.com',
+        ];
         if (adminEmails.includes(user.email)) {
             return true;
         }

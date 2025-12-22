@@ -2,31 +2,32 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.analyzePlantFlow = void 0;
 const genkit_1 = require("./genkit");
-const zod_1 = require("zod");
-const PlantAnalysisSchema = zod_1.z.object({
-    species: zod_1.z.object({
-        scientific: zod_1.z.string(),
-        common: zod_1.z.array(zod_1.z.string()),
-        confidence: zod_1.z.number(),
+const genkit_2 = require("genkit");
+const InputSchema = genkit_2.z.object({
+    images: genkit_2.z.array(genkit_2.z.string()),
+});
+const PlantAnalysisSchema = genkit_2.z.object({
+    species: genkit_2.z.object({
+        scientific: genkit_2.z.string(),
+        common: genkit_2.z.array(genkit_2.z.string()),
+        confidence: genkit_2.z.number(),
     }),
-    healthStatus: zod_1.z.enum(['healthy', 'needs_attention', 'critical']),
-    issues: zod_1.z.array(zod_1.z.object({
-        type: zod_1.z.string(),
-        severity: zod_1.z.enum(['low', 'medium', 'high']),
-        description: zod_1.z.string(),
-        symptoms: zod_1.z.array(zod_1.z.string()),
+    healthStatus: genkit_2.z.enum(['healthy', 'needs_attention', 'critical']),
+    issues: genkit_2.z.array(genkit_2.z.object({
+        type: genkit_2.z.string(),
+        severity: genkit_2.z.enum(['low', 'medium', 'high']),
+        description: genkit_2.z.string(),
+        symptoms: genkit_2.z.array(genkit_2.z.string()),
     })),
-    recommendations: zod_1.z.array(zod_1.z.object({
-        action: zod_1.z.string(),
-        priority: zod_1.z.enum(['immediate', 'soon', 'routine']),
-        details: zod_1.z.string(),
+    recommendations: genkit_2.z.array(genkit_2.z.object({
+        action: genkit_2.z.string(),
+        priority: genkit_2.z.enum(['immediate', 'soon', 'routine']),
+        details: genkit_2.z.string(),
     })),
 });
 exports.analyzePlantFlow = genkit_1.ai.defineFlow({
     name: 'analyzePlant',
-    inputSchema: zod_1.z.object({
-        images: zod_1.z.array(zod_1.z.string()),
-    }),
+    inputSchema: InputSchema,
     outputSchema: PlantAnalysisSchema,
 }, async (input) => {
     const prompt = `Analiza esta(s) imagen(es) de planta como un agrónomo experto.
@@ -59,6 +60,7 @@ Sé específico y práctico en tus recomendaciones.`;
             temperature: 0.3,
         },
         output: {
+            format: 'json',
             schema: PlantAnalysisSchema,
         },
     });

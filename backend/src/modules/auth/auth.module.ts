@@ -12,22 +12,24 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([User, UserPreferences, UserAddress]),
-        PassportModule.register({ defaultStrategy: 'jwt' }),
-        JwtModule.registerAsync({
-            imports: [ConfigModule],
-            inject: [ConfigService],
-            useFactory: async (configService: ConfigService) => ({
-                secret: configService.get<string>('JWT_SECRET') || 'your-secret-key-change-in-production',
-                signOptions: {
-                    expiresIn: '7d',
-                },
-            }),
-        }),
-    ],
-    controllers: [AuthController],
-    providers: [AuthService, JwtStrategy, GoogleStrategy],
-    exports: [AuthService, JwtStrategy, GoogleStrategy, PassportModule],
+  imports: [
+    TypeOrmModule.forFeature([User, UserPreferences, UserAddress]),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret:
+          configService.get<string>('JWT_SECRET') ||
+          'your-secret-key-change-in-production',
+        signOptions: {
+          expiresIn: '7d',
+        },
+      }),
+    }),
+  ],
+  controllers: [AuthController],
+  providers: [AuthService, JwtStrategy, GoogleStrategy],
+  exports: [AuthService, JwtStrategy, GoogleStrategy, PassportModule],
 })
-export class AuthModule { }
+export class AuthModule {}

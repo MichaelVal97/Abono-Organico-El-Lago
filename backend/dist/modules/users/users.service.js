@@ -65,7 +65,9 @@ let UsersService = class UsersService {
     async onModuleInit() {
         const adminEmail = 'abonoellago@gmail.com';
         try {
-            const adminExists = await this.userRepository.findOne({ where: { email: adminEmail } });
+            const adminExists = await this.userRepository.findOne({
+                where: { email: adminEmail },
+            });
             if (!adminExists) {
                 console.log('Seeding Admin User...');
                 const salt = await bcrypt.genSalt(10);
@@ -101,7 +103,7 @@ let UsersService = class UsersService {
         const users = await this.userRepository.find({
             relations: ['preferences'],
         });
-        return users.map(user => this.sanitizeUser(user));
+        return users.map((user) => this.sanitizeUser(user));
     }
     async getProfile(userId) {
         const user = await this.userRepository.findOne({

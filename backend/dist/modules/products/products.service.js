@@ -51,7 +51,9 @@ let ProductsService = class ProductsService {
         await queryRunner.connect();
         await queryRunner.startTransaction();
         try {
-            await queryRunner.query('DELETE FROM "reviews" WHERE "product_id" = $1', [id]);
+            await queryRunner.query('DELETE FROM "reviews" WHERE "product_id" = $1', [
+                id,
+            ]);
             await queryRunner.query('DELETE FROM "order_items" WHERE "product_id" = $1', [id]);
             await queryRunner.manager.remove(product);
             await queryRunner.commitTransaction();
@@ -96,8 +98,8 @@ let ProductsService = class ProductsService {
                 priceRange: '1 Bulto - 50Kg',
                 images: [
                     'https://i.postimg.cc/XVjTxCQq/Whats-App-Image-2025-11-27-at-13-14-22-(2).jpg',
-                    'https://i.postimg.cc/69WDzvYQ/Whats-App-Image-2025-11-27-at-13-14-21.jpg'
-                ]
+                    'https://i.postimg.cc/69WDzvYQ/Whats-App-Image-2025-11-27-at-13-14-21.jpg',
+                ],
             },
         ];
         const newProducts = this.productRepository.create(seedProducts);

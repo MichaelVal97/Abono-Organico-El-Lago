@@ -25,10 +25,21 @@ let ReviewsService = class ReviewsService {
         this.reviewsRepository = reviewsRepository;
         this.productsRepository = productsRepository;
     }
-    BAD_WORDS = ['mierda', 'puta', 'pendejo', 'estupido', 'idiota', 'basura', 'carajo', 'verga', 'imbecil', 'malparido'];
+    BAD_WORDS = [
+        'mierda',
+        'puta',
+        'pendejo',
+        'estupido',
+        'idiota',
+        'basura',
+        'carajo',
+        'verga',
+        'imbecil',
+        'malparido',
+    ];
     checkProfanity(text) {
         const lowerText = text.toLowerCase();
-        const foundWord = this.BAD_WORDS.find(word => lowerText.includes(word));
+        const foundWord = this.BAD_WORDS.find((word) => lowerText.includes(word));
         if (foundWord) {
             throw new common_1.BadRequestException('El comentario contiene lenguaje inapropiado.');
         }
@@ -37,7 +48,7 @@ let ReviewsService = class ReviewsService {
         const { productId, ...reviewData } = createReviewDto;
         this.checkProfanity(reviewData.comment);
         const product = await this.productsRepository.findOne({
-            where: { id: productId }
+            where: { id: productId },
         });
         if (!product) {
             throw new common_1.NotFoundException('Producto no encontrado');
@@ -45,8 +56,8 @@ let ReviewsService = class ReviewsService {
         const existingReview = await this.reviewsRepository.findOne({
             where: {
                 product: { id: productId },
-                user: { id: userId }
-            }
+                user: { id: userId },
+            },
         });
         if (existingReview) {
             throw new common_1.ConflictException('Ya has publicado una reseña para este producto.');
@@ -62,7 +73,7 @@ let ReviewsService = class ReviewsService {
         return await this.reviewsRepository.find({
             where: { product: { id: productId } },
             relations: ['user'],
-            order: { createdAt: 'DESC' }
+            order: { createdAt: 'DESC' },
         });
     }
     async getAverageRating(productId) {
@@ -74,13 +85,13 @@ let ReviewsService = class ReviewsService {
             .getRawOne();
         return {
             average: parseFloat(result.average) || 0,
-            count: parseInt(result.count) || 0
+            count: parseInt(result.count) || 0,
         };
     }
     async update(id, userId, updateReviewDto) {
         const review = await this.reviewsRepository.findOne({
             where: { id },
-            relations: ['user']
+            relations: ['user'],
         });
         if (!review) {
             throw new common_1.NotFoundException('Reseña no encontrada');
@@ -97,7 +108,7 @@ let ReviewsService = class ReviewsService {
     async delete(id, userId) {
         const review = await this.reviewsRepository.findOne({
             where: { id },
-            relations: ['user']
+            relations: ['user'],
         });
         if (!review) {
             throw new common_1.NotFoundException('Reseña no encontrada');
@@ -110,7 +121,7 @@ let ReviewsService = class ReviewsService {
     async findAll() {
         return await this.reviewsRepository.find({
             relations: ['user', 'product'],
-            order: { createdAt: 'DESC' }
+            order: { createdAt: 'DESC' },
         });
     }
 };

@@ -1,11 +1,13 @@
-import { z } from 'zod';
-export declare const analyzePlantFlow: import("genkit").Action<z.ZodObject<{
+import { z } from 'genkit';
+import { Flow } from 'genkit';
+declare const InputSchema: z.ZodObject<{
     images: z.ZodArray<z.ZodString, "many">;
 }, "strip", z.ZodTypeAny, {
     images: string[];
 }, {
     images: string[];
-}>, z.ZodObject<{
+}>;
+declare const PlantAnalysisSchema: z.ZodObject<{
     species: z.ZodObject<{
         scientific: z.ZodString;
         common: z.ZodArray<z.ZodString, "many">;
@@ -26,14 +28,14 @@ export declare const analyzePlantFlow: import("genkit").Action<z.ZodObject<{
         description: z.ZodString;
         symptoms: z.ZodArray<z.ZodString, "many">;
     }, "strip", z.ZodTypeAny, {
+        description: string;
         type: string;
         severity: "low" | "medium" | "high";
-        description: string;
         symptoms: string[];
     }, {
+        description: string;
         type: string;
         severity: "low" | "medium" | "high";
-        description: string;
         symptoms: string[];
     }>, "many">;
     recommendations: z.ZodArray<z.ZodObject<{
@@ -51,9 +53,9 @@ export declare const analyzePlantFlow: import("genkit").Action<z.ZodObject<{
     }>, "many">;
 }, "strip", z.ZodTypeAny, {
     issues: {
+        description: string;
         type: string;
         severity: "low" | "medium" | "high";
-        description: string;
         symptoms: string[];
     }[];
     species: {
@@ -69,9 +71,9 @@ export declare const analyzePlantFlow: import("genkit").Action<z.ZodObject<{
     }[];
 }, {
     issues: {
+        description: string;
         type: string;
         severity: "low" | "medium" | "high";
-        description: string;
         symptoms: string[];
     }[];
     species: {
@@ -85,4 +87,7 @@ export declare const analyzePlantFlow: import("genkit").Action<z.ZodObject<{
         priority: "immediate" | "soon" | "routine";
         details: string;
     }[];
-}>, z.ZodTypeAny>;
+}>;
+export type PlantAnalysis = z.infer<typeof PlantAnalysisSchema>;
+export declare const analyzePlantFlow: Flow<typeof InputSchema, typeof PlantAnalysisSchema>;
+export {};

@@ -1,11 +1,13 @@
 import { UsersService } from './users.service';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { UpdateUserDto } from '../auth/dto/update-user.dto';
 import { UpdatePreferencesDto } from '../auth/dto/update-preferences.dto';
 import { CreateAddressDto } from '../auth/dto/create-address.dto';
 import { UpdateAddressDto } from '../auth/dto/update-address.dto';
 export declare class UsersController {
     private readonly usersService;
-    constructor(usersService: UsersService);
+    private readonly cloudinaryService;
+    constructor(usersService: UsersService, cloudinaryService: CloudinaryService);
     findAll(): Promise<{
         id: string;
         email: string;

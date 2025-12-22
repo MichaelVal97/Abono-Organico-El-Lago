@@ -21,7 +21,7 @@ __decorate([
     (0, swagger_1.ApiPropertyOptional)({
         description: 'Rating del producto (1-5 estrellas)',
         minimum: 1,
-        maximum: 5
+        maximum: 5,
     }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsInt)(),
@@ -33,7 +33,7 @@ __decorate([
     (0, swagger_1.ApiPropertyOptional)({
         description: 'Comentario sobre el producto',
         minLength: 10,
-        maxLength: 500
+        maxLength: 500,
     }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),

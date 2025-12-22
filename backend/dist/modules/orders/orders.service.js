@@ -36,7 +36,9 @@ let OrdersService = class OrdersService {
         order.items = [];
         let total = 0;
         for (const itemDto of createOrderDto.items) {
-            const product = await this.productRepository.findOne({ where: { id: itemDto.productId } });
+            const product = await this.productRepository.findOne({
+                where: { id: itemDto.productId },
+            });
             if (!product) {
                 throw new common_1.NotFoundException(`Product not found: ${itemDto.productId}`);
             }
@@ -79,18 +81,22 @@ let OrdersService = class OrdersService {
             .createQueryBuilder('o')
             .select('SUM(o.total)', 'total')
             .getRawOne();
-        const revenue = revenueResult && revenueResult.total ? parseFloat(revenueResult.total) : 0;
+        const revenue = revenueResult && revenueResult.total
+            ? parseFloat(revenueResult.total)
+            : 0;
         const activeUsersResult = await this.orderRepository
             .createQueryBuilder('o')
             .select('COUNT(DISTINCT o.user_id)', 'count')
             .getRawOne();
-        const activeUsers = activeUsersResult ? parseInt(activeUsersResult.count) : 0;
+        const activeUsers = activeUsersResult
+            ? parseInt(activeUsersResult.count)
+            : 0;
         const totalUsers = await this.userRepository.count();
         return {
             totalOrders,
             revenue,
             activeUsers,
-            totalUsers
+            totalUsers,
         };
     }
 };

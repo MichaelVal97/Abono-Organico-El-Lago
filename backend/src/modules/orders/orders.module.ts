@@ -8,9 +8,9 @@ import { Product } from '../products/entities/product.entity';
 import { User } from '../auth/entities/user.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Order, OrderItem, Product, User])],
-    controllers: [OrdersController],
-    providers: [OrdersService],
-    exports: [OrdersService]
+  imports: [TypeOrmModule.forFeature([Order, OrderItem, Product, User])],
+  controllers: [OrdersController],
+  providers: [OrdersService],
+  exports: [OrdersService],
 })
-export class OrdersModule { }
+export class OrdersModule {}

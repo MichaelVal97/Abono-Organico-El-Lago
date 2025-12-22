@@ -31,7 +31,7 @@ let AdminController = class AdminController {
         const users = await this.usersService.findAll();
         return {
             totalUsers: users.length,
-            activeUsers: users.filter(u => u.isActive).length,
+            activeUsers: users.filter((u) => u.isActive).length,
         };
     }
     async changeRole(id, role) {
@@ -52,7 +52,7 @@ let AdminController = class AdminController {
                 total: 25000,
                 status: 'pending',
                 createdAt: new Date().toISOString(),
-            }
+            },
         ];
     }
 };

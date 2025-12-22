@@ -1,22 +1,27 @@
 import {
-    Controller,
-    Get,
-    Patch,
-    Post,
-    Delete,
-    Body,
-    Param,
-    UseGuards,
-    Request,
-    UseInterceptors,
-    UploadedFile,
-    BadRequestException,
+  Controller,
+  Get,
+  Patch,
+  Post,
+  Delete,
+  Body,
+  Param,
+  UseGuards,
+  Request,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiConsumes,
+} from '@nestjs/swagger';
 import { UsersService } from './users.service';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UpdateUserDto } from '../auth/dto/update-user.dto';
 import { UpdatePreferencesDto } from '../auth/dto/update-preferences.dto';
@@ -28,149 +33,179 @@ import { UpdateAddressDto } from '../auth/dto/update-address.dto';
 @Controller('users')
 @UseGuards(JwtAuthGuard)
 export class UsersController {
-    constructor(private readonly usersService: UsersService) { }
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) { }
 
-    @Get()
-    @ApiOperation({ summary: 'Listar todos los usuarios' })
-    @ApiResponse({ status: 200, description: 'Lista de usuarios obtenida exitosamente' })
-    async findAll() {
-        return this.usersService.findAll();
-    }
+  @Get()
+  @ApiOperation({ summary: 'Listar todos los usuarios' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de usuarios obtenida exitosamente',
+  })
+  async findAll() {
+    return this.usersService.findAll();
+  }
 
-    @Get('profile')
-    @ApiOperation({ summary: 'Obtener perfil del usuario autenticado' })
-    @ApiResponse({ status: 200, description: 'Perfil obtenido exitosamente' })
-    async getProfile(@Request() req) {
-        return this.usersService.getProfile(req.user.id);
-    }
+  @Get('profile')
+  @ApiOperation({ summary: 'Obtener perfil del usuario autenticado' })
+  @ApiResponse({ status: 200, description: 'Perfil obtenido exitosamente' })
+  async getProfile(@Request() req) {
+    return this.usersService.getProfile(req.user.id);
+  }
 
-    @Patch('profile')
-    @ApiOperation({ summary: 'Actualizar perfil del usuario' })
-    @ApiResponse({ status: 200, description: 'Perfil actualizado exitosamente' })
-    async updateProfile(@Request() req, @Body() updateUserDto: UpdateUserDto) {
-        return this.usersService.updateProfile(req.user.id, updateUserDto);
-    }
+  @Patch('profile')
+  @ApiOperation({ summary: 'Actualizar perfil del usuario' })
+  @ApiResponse({ status: 200, description: 'Perfil actualizado exitosamente' })
+  async updateProfile(@Request() req, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.updateProfile(req.user.id, updateUserDto);
+  }
 
-    @Post('avatar')
-    @ApiOperation({ summary: 'Subir avatar del usuario' })
-    @ApiConsumes('multipart/form-data')
-    @ApiResponse({ status: 200, description: 'Avatar subido exitosamente' })
-    @UseInterceptors(
-        FileInterceptor('avatar', {
-            storage: diskStorage({
-                destination: './uploads/avatars',
-                filename: (req, file, cb) => {
-                    const randomName = Array(32)
-                        .fill(null)
-                        .map(() => Math.round(Math.random() * 16).toString(16))
-                        .join('');
-                    cb(null, `${randomName}${extname(file.originalname)}`);
-                },
-            }),
-            limits: {
-                fileSize: 5 * 1024 * 1024, // 5MB
-            },
-            fileFilter: (req, file, cb) => {
-                if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
-                    return cb(
-                        new BadRequestException('Solo se permiten archivos de imagen'),
-                        false,
-                    );
-                }
-                cb(null, true);
-            },
-        }),
-    )
-    async uploadAvatar(@Request() req, @UploadedFile() file: Express.Multer.File) {
-        if (!file) {
-            throw new BadRequestException('No se proporcionó ningún archivo');
+  @Post('avatar')
+  @ApiOperation({ summary: 'Subir avatar del usuario' })
+  @ApiConsumes('multipart/form-data')
+  @ApiResponse({ status: 200, description: 'Avatar subido exitosamente' })
+  @UseInterceptors(
+    FileInterceptor('avatar', {
+      limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB
+      },
+      fileFilter: (req, file, cb) => {
+        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
+          return cb(
+            new BadRequestException('Solo se permiten archivos de imagen'),
+            false,
+          );
         }
-
-        const avatarUrl = `/uploads/avatars/${file.filename}`;
-        return this.usersService.updateAvatar(req.user.id, avatarUrl);
+        cb(null, true);
+      },
+    }),
+  )
+  async uploadAvatar(
+    @Request() req,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) {
+      throw new BadRequestException('No se proporcionó ningún archivo');
     }
 
-    @Delete('avatar')
-    @ApiOperation({ summary: 'Eliminar avatar del usuario' })
-    @ApiResponse({ status: 200, description: 'Avatar eliminado exitosamente' })
-    async deleteAvatar(@Request() req) {
-        return this.usersService.deleteAvatar(req.user.id);
-    }
+    const result = await this.cloudinaryService.uploadImage(file).catch(() => {
+      throw new BadRequestException('Error al subir la imagen a Cloudinary');
+    });
 
-    @Get('preferences')
-    @ApiOperation({ summary: 'Obtener preferencias del usuario' })
-    @ApiResponse({ status: 200, description: 'Preferencias obtenidas exitosamente' })
-    async getPreferences(@Request() req) {
-        return this.usersService.getPreferences(req.user.id);
-    }
+    return this.usersService.updateAvatar(req.user.id, result.secure_url);
+  }
 
-    @Patch('preferences')
-    @ApiOperation({ summary: 'Actualizar preferencias del usuario' })
-    @ApiResponse({ status: 200, description: 'Preferencias actualizadas exitosamente' })
-    async updatePreferences(
-        @Request() req,
-        @Body() updatePreferencesDto: UpdatePreferencesDto,
-    ) {
-        return this.usersService.updatePreferences(req.user.id, updatePreferencesDto);
-    }
+  @Delete('avatar')
+  @ApiOperation({ summary: 'Eliminar avatar del usuario' })
+  @ApiResponse({ status: 200, description: 'Avatar eliminado exitosamente' })
+  async deleteAvatar(@Request() req) {
+    return this.usersService.deleteAvatar(req.user.id);
+  }
 
-    @Get('addresses')
-    @ApiOperation({ summary: 'Listar direcciones del usuario' })
-    @ApiResponse({ status: 200, description: 'Direcciones obtenidas exitosamente' })
-    async getAddresses(@Request() req) {
-        return this.usersService.getAddresses(req.user.id);
-    }
+  @Get('preferences')
+  @ApiOperation({ summary: 'Obtener preferencias del usuario' })
+  @ApiResponse({
+    status: 200,
+    description: 'Preferencias obtenidas exitosamente',
+  })
+  async getPreferences(@Request() req) {
+    return this.usersService.getPreferences(req.user.id);
+  }
 
-    @Post('addresses')
-    @ApiOperation({ summary: 'Crear nueva dirección' })
-    @ApiResponse({ status: 201, description: 'Dirección creada exitosamente' })
-    async createAddress(@Request() req, @Body() createAddressDto: CreateAddressDto) {
-        return this.usersService.createAddress(req.user.id, createAddressDto);
-    }
+  @Patch('preferences')
+  @ApiOperation({ summary: 'Actualizar preferencias del usuario' })
+  @ApiResponse({
+    status: 200,
+    description: 'Preferencias actualizadas exitosamente',
+  })
+  async updatePreferences(
+    @Request() req,
+    @Body() updatePreferencesDto: UpdatePreferencesDto,
+  ) {
+    return this.usersService.updatePreferences(
+      req.user.id,
+      updatePreferencesDto,
+    );
+  }
 
-    @Patch('addresses/:id')
-    @ApiOperation({ summary: 'Actualizar dirección' })
-    @ApiResponse({ status: 200, description: 'Dirección actualizada exitosamente' })
-    async updateAddress(
-        @Request() req,
-        @Param('id') addressId: string,
-        @Body() updateAddressDto: UpdateAddressDto,
-    ) {
-        return this.usersService.updateAddress(req.user.id, addressId, updateAddressDto);
-    }
+  @Get('addresses')
+  @ApiOperation({ summary: 'Listar direcciones del usuario' })
+  @ApiResponse({
+    status: 200,
+    description: 'Direcciones obtenidas exitosamente',
+  })
+  async getAddresses(@Request() req) {
+    return this.usersService.getAddresses(req.user.id);
+  }
 
-    @Delete('addresses/:id')
-    @ApiOperation({ summary: 'Eliminar dirección' })
-    @ApiResponse({ status: 200, description: 'Dirección eliminada exitosamente' })
-    async deleteAddress(@Request() req, @Param('id') addressId: string) {
-        return this.usersService.deleteAddress(req.user.id, addressId);
-    }
+  @Post('addresses')
+  @ApiOperation({ summary: 'Crear nueva dirección' })
+  @ApiResponse({ status: 201, description: 'Dirección creada exitosamente' })
+  async createAddress(
+    @Request() req,
+    @Body() createAddressDto: CreateAddressDto,
+  ) {
+    return this.usersService.createAddress(req.user.id, createAddressDto);
+  }
 
-    @Patch('addresses/:id/default')
-    @ApiOperation({ summary: 'Marcar dirección como predeterminada' })
-    @ApiResponse({ status: 200, description: 'Dirección marcada como predeterminada' })
-    async setDefaultAddress(@Request() req, @Param('id') addressId: string) {
-        return this.usersService.setDefaultAddress(req.user.id, addressId);
-    }
+  @Patch('addresses/:id')
+  @ApiOperation({ summary: 'Actualizar dirección' })
+  @ApiResponse({
+    status: 200,
+    description: 'Dirección actualizada exitosamente',
+  })
+  async updateAddress(
+    @Request() req,
+    @Param('id') addressId: string,
+    @Body() updateAddressDto: UpdateAddressDto,
+  ) {
+    return this.usersService.updateAddress(
+      req.user.id,
+      addressId,
+      updateAddressDto,
+    );
+  }
 
-    @Get(':id')
-    @ApiOperation({ summary: 'Obtener un usuario por ID (Admin)' })
-    @ApiResponse({ status: 200, description: 'Usuario obtenido exitosamente' })
-    async findOne(@Param('id') id: string) {
-        return this.usersService.getProfile(id);
-    }
+  @Delete('addresses/:id')
+  @ApiOperation({ summary: 'Eliminar dirección' })
+  @ApiResponse({ status: 200, description: 'Dirección eliminada exitosamente' })
+  async deleteAddress(@Request() req, @Param('id') addressId: string) {
+    return this.usersService.deleteAddress(req.user.id, addressId);
+  }
 
-    @Patch(':id/role')
-    @ApiOperation({ summary: 'Cambiar rol de usuario (Admin)' })
-    @ApiResponse({ status: 200, description: 'Rol actualizado exitosamente' })
-    async updateRole(@Param('id') id: string, @Body('role') role: 'user' | 'admin') {
-        return this.usersService.updateRole(id, role);
-    }
+  @Patch('addresses/:id/default')
+  @ApiOperation({ summary: 'Marcar dirección como predeterminada' })
+  @ApiResponse({
+    status: 200,
+    description: 'Dirección marcada como predeterminada',
+  })
+  async setDefaultAddress(@Request() req, @Param('id') addressId: string) {
+    return this.usersService.setDefaultAddress(req.user.id, addressId);
+  }
 
-    @Patch(':id')
-    @ApiOperation({ summary: 'Actualizar usuario por ID (Admin)' })
-    @ApiResponse({ status: 200, description: 'Usuario actualizado exitosamente' })
-    async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-        return this.usersService.updateProfile(id, updateUserDto);
-    }
+  @Get(':id')
+  @ApiOperation({ summary: 'Obtener un usuario por ID (Admin)' })
+  @ApiResponse({ status: 200, description: 'Usuario obtenido exitosamente' })
+  async findOne(@Param('id') id: string) {
+    return this.usersService.getProfile(id);
+  }
+
+  @Patch(':id/role')
+  @ApiOperation({ summary: 'Cambiar rol de usuario (Admin)' })
+  @ApiResponse({ status: 200, description: 'Rol actualizado exitosamente' })
+  async updateRole(
+    @Param('id') id: string,
+    @Body('role') role: 'user' | 'admin',
+  ) {
+    return this.usersService.updateRole(id, role);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Actualizar usuario por ID (Admin)' })
+  @ApiResponse({ status: 200, description: 'Usuario actualizado exitosamente' })
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.updateProfile(id, updateUserDto);
+  }
 }

@@ -34,7 +34,7 @@ async function bootstrap() {
     .setTitle('Abono Orgánico El Lago API')
     .setDescription(
       'API RESTful para el sistema de e-commerce de abonos orgánicos. ' +
-      'Incluye gestión de productos, autenticación de usuarios, perfiles y direcciones.',
+        'Incluye gestión de productos, autenticación de usuarios, perfiles y direcciones.',
     )
     .setVersion('1.0')
     .addBearerAuth()
@@ -56,5 +56,3 @@ async function bootstrap() {
   console.log(`📚 Swagger documentation: http://localhost:${port}/api\n`);
 }
 bootstrap();
-
-

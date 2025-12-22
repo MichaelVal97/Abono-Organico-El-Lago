@@ -15,6 +15,7 @@ const user_entity_1 = require("../auth/entities/user.entity");
 const user_preferences_entity_1 = require("../auth/entities/user-preferences.entity");
 const user_address_entity_1 = require("../auth/entities/user-address.entity");
 const auth_module_1 = require("../auth/auth.module");
+const cloudinary_module_1 = require("../cloudinary/cloudinary.module");
 let UsersModule = class UsersModule {
 };
 exports.UsersModule = UsersModule;
@@ -23,6 +24,7 @@ exports.UsersModule = UsersModule = __decorate([
         imports: [
             typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, user_preferences_entity_1.UserPreferences, user_address_entity_1.UserAddress]),
             auth_module_1.AuthModule,
+            cloudinary_module_1.CloudinaryModule,
         ],
         controllers: [users_controller_1.UsersController],
         providers: [users_service_1.UsersService],

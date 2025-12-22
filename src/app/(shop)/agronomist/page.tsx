@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Upload, Sparkles, Leaf } from 'lucide-react';
+import { Upload, Sparkles, Leaf, Calculator } from 'lucide-react';
 
 interface PlantAnalysis {
     species: {
@@ -30,6 +30,31 @@ export default function AgronomistPage() {
     const [previews, setPreviews] = useState<string[]>([]);
     const [analysis, setAnalysis] = useState<PlantAnalysis | null>(null);
     const [loading, setLoading] = useState(false);
+
+    // Calculator State
+    const [calcArea, setCalcArea] = useState('');
+    const [calcUnit, setCalcUnit] = useState('m2');
+    const [calcCrop, setCalcCrop] = useState('vegetables');
+    const [calcResult, setCalcResult] = useState<number | null>(null);
+
+    const handleCalculate = () => {
+        const area = parseFloat(calcArea);
+        if (isNaN(area) || area <= 0) return;
+
+        // Base dosage rates (kg per unit)
+        // These are example values - normally would come from a database or more complex logic
+        const rates = {
+            vegetables: { m2: 0.5, ha: 5000 },
+            fruit_trees: { m2: 1.0, ha: 10000 },
+            ornamental: { m2: 0.2, ha: 2000 },
+            lawn: { m2: 0.1, ha: 1000 }
+        };
+
+        const cropRates = rates[calcCrop as keyof typeof rates];
+        const rate = calcUnit === 'm2' ? cropRates.m2 : cropRates.ha;
+
+        setCalcResult(area * rate);
+    };
 
     const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || []);
@@ -115,10 +140,77 @@ export default function AgronomistPage() {
                     </div>
                     <h1 className="text-4xl font-bold mb-4">Sé Agrónomo</h1>
                     <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                        Sube una foto de tu planta y descubre qué le hace falta o qué puede estar pasando.
-                        Nuestra IA identificará la especie y diagnosticará problemas de salud.
+                        Herramientas profesionales para el cuidado de tus cultivos.
+                        Calcula dosis de abono o diagnostica problemas con IA.
                     </p>
                 </div>
+
+                {/* Calculator Section */}
+                <Card className="mb-12 bg-secondary/10 border-primary/20">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <Calculator className="h-5 w-5 text-primary" />
+                            Calculadora de Dosis de Abono
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="grid md:grid-cols-4 gap-6 items-end">
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">Área</label>
+                                <input
+                                    type="number"
+                                    placeholder="Ej: 100"
+                                    value={calcArea}
+                                    onChange={(e) => setCalcArea(e.target.value)}
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">Unidad</label>
+                                <select
+                                    value={calcUnit}
+                                    onChange={(e) => setCalcUnit(e.target.value)}
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                >
+                                    <option value="m2">Metros Cuadrados (m²)</option>
+                                    <option value="ha">Hectáreas (Ha)</option>
+                                </select>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">Tipo de Cultivo</label>
+                                <select
+                                    value={calcCrop}
+                                    onChange={(e) => setCalcCrop(e.target.value)}
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                >
+                                    <option value="vegetables">Hortalizas / Verduras</option>
+                                    <option value="fruit_trees">Árboles Frutales</option>
+                                    <option value="ornamental">Plantas Ornamentales</option>
+                                    <option value="lawn">Césped / Pasto</option>
+                                </select>
+                            </div>
+
+                            <Button onClick={handleCalculate} className="w-full">
+                                Calcular
+                            </Button>
+                        </div>
+
+                        {calcResult !== null && (
+                            <div className="mt-6 p-4 bg-background rounded-lg border flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm text-muted-foreground">Cantidad Recomendada:</p>
+                                    <p className="text-2xl font-bold text-primary">{calcResult.toFixed(2)} kg</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-sm text-muted-foreground">Para un área de:</p>
+                                    <p className="font-medium">{calcArea} {calcUnit === 'm2' ? 'm²' : 'Ha'}</p>
+                                </div>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
 
                 {/* Upload Section */}
                 {!analysis && (
@@ -272,8 +364,8 @@ export default function AgronomistPage() {
                                         <div key={index} className="space-y-2">
                                             <div className="flex items-center gap-2">
                                                 <span className={`text-xs px-2 py-1 rounded ${rec.priority === 'immediate' ? 'bg-red-100 text-red-800' :
-                                                        rec.priority === 'soon' ? 'bg-orange-100 text-orange-800' :
-                                                            'bg-blue-100 text-blue-800'
+                                                    rec.priority === 'soon' ? 'bg-orange-100 text-orange-800' :
+                                                        'bg-blue-100 text-blue-800'
                                                     }`}>
                                                     {rec.priority === 'immediate' && 'Inmediato'}
                                                     {rec.priority === 'soon' && 'Pronto'}

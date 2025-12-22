@@ -16,9 +16,8 @@ exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
 const swagger_1 = require("@nestjs/swagger");
-const multer_1 = require("multer");
-const path_1 = require("path");
 const users_service_1 = require("./users.service");
+const cloudinary_service_1 = require("../cloudinary/cloudinary.service");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const update_user_dto_1 = require("../auth/dto/update-user.dto");
 const update_preferences_dto_1 = require("../auth/dto/update-preferences.dto");
@@ -26,8 +25,10 @@ const create_address_dto_1 = require("../auth/dto/create-address.dto");
 const update_address_dto_1 = require("../auth/dto/update-address.dto");
 let UsersController = class UsersController {
     usersService;
-    constructor(usersService) {
+    cloudinaryService;
+    constructor(usersService, cloudinaryService) {
         this.usersService = usersService;
+        this.cloudinaryService = cloudinaryService;
     }
     async findAll() {
         return this.usersService.findAll();
@@ -42,8 +43,10 @@ let UsersController = class UsersController {
         if (!file) {
             throw new common_1.BadRequestException('No se proporcionó ningún archivo');
         }
-        const avatarUrl = `/uploads/avatars/${file.filename}`;
-        return this.usersService.updateAvatar(req.user.id, avatarUrl);
+        const result = await this.cloudinaryService.uploadImage(file).catch(() => {
+            throw new common_1.BadRequestException('Error al subir la imagen a Cloudinary');
+        });
+        return this.usersService.updateAvatar(req.user.id, result.secure_url);
     }
     async deleteAvatar(req) {
         return this.usersService.deleteAvatar(req.user.id);
@@ -83,7 +86,10 @@ exports.UsersController = UsersController;
 __decorate([
     (0, common_1.Get)(),
     (0, swagger_1.ApiOperation)({ summary: 'Listar todos los usuarios' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Lista de usuarios obtenida exitosamente' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Lista de usuarios obtenida exitosamente',
+    }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
@@ -113,16 +119,6 @@ __decorate([
     (0, swagger_1.ApiConsumes)('multipart/form-data'),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Avatar subido exitosamente' }),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('avatar', {
-        storage: (0, multer_1.diskStorage)({
-            destination: './uploads/avatars',
-            filename: (req, file, cb) => {
-                const randomName = Array(32)
-                    .fill(null)
-                    .map(() => Math.round(Math.random() * 16).toString(16))
-                    .join('');
-                cb(null, `${randomName}${(0, path_1.extname)(file.originalname)}`);
-            },
-        }),
         limits: {
             fileSize: 5 * 1024 * 1024,
         },
@@ -151,7 +147,10 @@ __decorate([
 __decorate([
     (0, common_1.Get)('preferences'),
     (0, swagger_1.ApiOperation)({ summary: 'Obtener preferencias del usuario' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Preferencias obtenidas exitosamente' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Preferencias obtenidas exitosamente',
+    }),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -160,7 +159,10 @@ __decorate([
 __decorate([
     (0, common_1.Patch)('preferences'),
     (0, swagger_1.ApiOperation)({ summary: 'Actualizar preferencias del usuario' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Preferencias actualizadas exitosamente' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Preferencias actualizadas exitosamente',
+    }),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -170,7 +172,10 @@ __decorate([
 __decorate([
     (0, common_1.Get)('addresses'),
     (0, swagger_1.ApiOperation)({ summary: 'Listar direcciones del usuario' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Direcciones obtenidas exitosamente' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Direcciones obtenidas exitosamente',
+    }),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -189,7 +194,10 @@ __decorate([
 __decorate([
     (0, common_1.Patch)('addresses/:id'),
     (0, swagger_1.ApiOperation)({ summary: 'Actualizar dirección' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Dirección actualizada exitosamente' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Dirección actualizada exitosamente',
+    }),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Param)('id')),
     __param(2, (0, common_1.Body)()),
@@ -210,7 +218,10 @@ __decorate([
 __decorate([
     (0, common_1.Patch)('addresses/:id/default'),
     (0, swagger_1.ApiOperation)({ summary: 'Marcar dirección como predeterminada' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Dirección marcada como predeterminada' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Dirección marcada como predeterminada',
+    }),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -251,6 +262,7 @@ exports.UsersController = UsersController = __decorate([
     (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Controller)('users'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    __metadata("design:paramtypes", [users_service_1.UsersService])
+    __metadata("design:paramtypes", [users_service_1.UsersService,
+        cloudinary_service_1.CloudinaryService])
 ], UsersController);
 //# sourceMappingURL=users.controller.js.map

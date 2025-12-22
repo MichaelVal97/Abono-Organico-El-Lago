@@ -1,22 +1,28 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Order } from './order.entity';
 import { Product } from '../../products/entities/product.entity';
 
 @Entity('order_items')
 export class OrderItem {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @ManyToOne(() => Order, (order) => order.items, { onDelete: 'CASCADE' })
-    order: Order;
+  @ManyToOne(() => Order, (order) => order.items, { onDelete: 'CASCADE' })
+  order: Order;
 
-    @ManyToOne(() => Product)
-    @JoinColumn({ name: 'product_id' })
-    product: Product;
+  @ManyToOne(() => Product)
+  @JoinColumn({ name: 'product_id' })
+  product: Product;
 
-    @Column('int')
-    quantity: number;
+  @Column('int')
+  quantity: number;
 
-    @Column('decimal', { precision: 10, scale: 2 })
-    price: number;
+  @Column('decimal', { precision: 10, scale: 2 })
+  price: number;
 }

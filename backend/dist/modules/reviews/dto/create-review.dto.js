@@ -23,7 +23,7 @@ __decorate([
         description: 'Rating del producto (1-5 estrellas)',
         minimum: 1,
         maximum: 5,
-        example: 5
+        example: 5,
     }),
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.Min)(1),
@@ -35,7 +35,7 @@ __decorate([
         description: 'Comentario sobre el producto',
         minLength: 10,
         maxLength: 500,
-        example: 'Excelente producto, muy buena calidad del compost.'
+        example: 'Excelente producto, muy buena calidad del compost.',
     }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MinLength)(10, { message: 'El comentario debe tener al menos 10 caracteres' }),
@@ -45,7 +45,7 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiProperty)({
         description: 'ID del producto a reseñar',
-        example: '123e4567-e89b-12d3-a456-426614174000'
+        example: '123e4567-e89b-12d3-a456-426614174000',
     }),
     (0, class_validator_1.IsUUID)(),
     __metadata("design:type", String)

@@ -32,7 +32,9 @@ let AgronomistController = class AgronomistController {
 exports.AgronomistController = AgronomistController;
 __decorate([
     (0, common_1.Post)('analyze'),
-    (0, swagger_1.ApiOperation)({ summary: 'Analyze plant images for species identification and health diagnosis' }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Analyze plant images for species identification and health diagnosis',
+    }),
     (0, swagger_1.ApiConsumes)('multipart/form-data'),
     (0, swagger_1.ApiBody)({
         schema: {

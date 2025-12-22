@@ -1,7 +1,7 @@
 import {
-    Injectable,
-    ConflictException,
-    UnauthorizedException,
+  Injectable,
+  ConflictException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -14,109 +14,111 @@ import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
-    constructor(
-        @InjectRepository(User)
-        private userRepository: Repository<User>,
-        @InjectRepository(UserPreferences)
-        private preferencesRepository: Repository<UserPreferences>,
-        private jwtService: JwtService,
-    ) { }
+  constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+    @InjectRepository(UserPreferences)
+    private preferencesRepository: Repository<UserPreferences>,
+    private jwtService: JwtService,
+  ) {}
 
-    async register(registerDto: RegisterDto) {
-        const { email, password, firstName, lastName } = registerDto;
+  async register(registerDto: RegisterDto) {
+    const { email, password, firstName, lastName } = registerDto;
 
-        // Check if user already exists
-        const existingUser = await this.userRepository.findOne({
-            where: { email },
-        });
+    // Check if user already exists
+    const existingUser = await this.userRepository.findOne({
+      where: { email },
+    });
 
-        if (existingUser) {
-            throw new ConflictException('El correo electrónico ya está registrado');
-        }
-
-        // Hash password
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Create user preferences
-        const preferences = this.preferencesRepository.create();
-        await this.preferencesRepository.save(preferences);
-
-        // Create user
-        const user = this.userRepository.create({
-            email,
-            password: hashedPassword,
-            firstName,
-            lastName,
-            preferences,
-        });
-
-        await this.userRepository.save(user);
-
-        // Generate JWT token
-        const token = this.generateToken(user);
-
-        return {
-            user: this.sanitizeUser(user),
-            token,
-        };
+    if (existingUser) {
+      throw new ConflictException('El correo electrónico ya está registrado');
     }
 
-    async login(loginDto: LoginDto) {
-        const { email, password } = loginDto;
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Find user
-        const user = await this.userRepository.findOne({
-            where: { email },
-            relations: ['preferences'],
-        });
+    // Create user preferences
+    const preferences = this.preferencesRepository.create();
+    await this.preferencesRepository.save(preferences);
 
-        if (!user) {
-            throw new UnauthorizedException('Credenciales inválidas');
-        }
+    // Create user
+    const user = this.userRepository.create({
+      email,
+      password: hashedPassword,
+      firstName,
+      lastName,
+      preferences,
+    });
 
-        // Check if user has password (not Google-only account)
-        if (!user.password) {
-            throw new UnauthorizedException('Esta cuenta usa Google Sign-In. Por favor inicia sesión con Google.');
-        }
+    await this.userRepository.save(user);
 
-        // Verify password
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+    // Generate JWT token
+    const token = this.generateToken(user);
 
-        if (!isPasswordValid) {
-            throw new UnauthorizedException('Credenciales inválidas');
-        }
+    return {
+      user: this.sanitizeUser(user),
+      token,
+    };
+  }
 
-        if (!user.isActive) {
-            throw new UnauthorizedException('Cuenta desactivada');
-        }
+  async login(loginDto: LoginDto) {
+    const { email, password } = loginDto;
 
-        // Generate JWT token
-        const token = this.generateToken(user);
+    // Find user
+    const user = await this.userRepository.findOne({
+      where: { email },
+      relations: ['preferences'],
+    });
 
-        return {
-            user: this.sanitizeUser(user),
-            token,
-        };
+    if (!user) {
+      throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    async validateGoogleUser(user: User) {
-        // User is already validated by Google strategy
-        // Just generate token and return
-        const token = this.generateToken(user);
-
-        return {
-            user: this.sanitizeUser(user),
-            token,
-        };
+    // Check if user has password (not Google-only account)
+    if (!user.password) {
+      throw new UnauthorizedException(
+        'Esta cuenta usa Google Sign-In. Por favor inicia sesión con Google.',
+      );
     }
 
-    private generateToken(user: User): string {
-        const payload = { sub: user.id, email: user.email };
-        return this.jwtService.sign(payload);
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    private sanitizeUser(user: User) {
-        const { password, ...sanitized } = user;
-        return sanitized;
+    if (!user.isActive) {
+      throw new UnauthorizedException('Cuenta desactivada');
     }
+
+    // Generate JWT token
+    const token = this.generateToken(user);
+
+    return {
+      user: this.sanitizeUser(user),
+      token,
+    };
+  }
+
+  async validateGoogleUser(user: User) {
+    // User is already validated by Google strategy
+    // Just generate token and return
+    const token = this.generateToken(user);
+
+    return {
+      user: this.sanitizeUser(user),
+      token,
+    };
+  }
+
+  private generateToken(user: User): string {
+    const payload = { sub: user.id, email: user.email };
+    return this.jwtService.sign(payload);
+  }
+
+  private sanitizeUser(user: User) {
+    const { password, ...sanitized } = user;
+    return sanitized;
+  }
 }

@@ -37,10 +37,7 @@ let GoogleStrategy = class GoogleStrategy extends (0, passport_1.PassportStrateg
         const { id, name, emails, photos } = profile;
         const email = emails[0].value;
         let user = await this.userRepository.findOne({
-            where: [
-                { googleId: id },
-                { email: email }
-            ],
+            where: [{ googleId: id }, { email: email }],
             relations: ['preferences'],
         });
         if (!user) {
