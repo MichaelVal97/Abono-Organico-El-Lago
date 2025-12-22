@@ -10,7 +10,12 @@ async function bootstrap() {
 
   // Enable CORS for frontend (Next.js on port 9002)
   app.enableCors({
-    origin: true,
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:9002',
+      'https://abono-organico-el-lago.vercel.app',
+      'https://abono-organico-frontend.vercel.app', // Fallback pattern
+    ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
@@ -34,7 +39,7 @@ async function bootstrap() {
     .setTitle('Abono Orgánico El Lago API')
     .setDescription(
       'API RESTful para el sistema de e-commerce de abonos orgánicos. ' +
-        'Incluye gestión de productos, autenticación de usuarios, perfiles y direcciones.',
+      'Incluye gestión de productos, autenticación de usuarios, perfiles y direcciones.',
     )
     .setVersion('1.0')
     .addBearerAuth()
