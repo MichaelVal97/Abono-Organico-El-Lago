@@ -17,22 +17,22 @@ export class CreateAddressDto {
   @ApiProperty({ example: 'Calle 123 #45-67' })
   @IsString()
   @IsNotEmpty()
-  street: string;
+  street!: string;
 
   @ApiProperty({ example: 'Bogotá' })
   @IsString()
   @IsNotEmpty()
-  city: string;
+  city!: string;
 
   @ApiProperty({ example: 'Cundinamarca' })
   @IsString()
   @IsNotEmpty()
-  state: string;
+  state!: string;
 
   @ApiProperty({ example: '110111' })
   @IsString()
   @IsNotEmpty()
-  zipCode: string;
+  zipCode!: string;
 
   @ApiProperty({ example: 'Colombia', required: false })
   @IsString()
