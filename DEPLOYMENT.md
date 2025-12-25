@@ -1,162 +1,123 @@
-# 🚀 Guía de Despliegue Completo - Abono Orgánico El Lago
+# 🚀 Guía Maestra de Despliegue - Abono Orgánico El Lago
 
-## Arquitectura de Despliegue
+Esta guía detalla paso a paso cómo llevar la aplicación a producción utilizando servicios modernos y gratuitos/económicos.
 
-```
-Frontend (Next.js) → Vercel
-Backend (NestJS) → Railway + PostgreSQL
-Chatbot (Python) → Railway
-```
+## 📋 Prerrequisitos
+Antes de empezar, asegúrate de tener cuentas en:
+1.  **GitHub**: Donde está alojado tu código.
+2.  **Railway**: Para el Backend, Base de Datos y Chatbot ([railway.app](https://railway.app)).
+3.  **Vercel**: Para el Frontend ([vercel.com](https://vercel.com)).
+4.  **Cloudinary**: Para almacenamiento de imágenes ([cloudinary.com](https://cloudinary.com)).
+5.  **Google Cloud Console**: Para el inicio de sesión con Google ([console.cloud.google.com](https://console.cloud.google.com)).
 
-## Paso 1: Desplegar Backend en Railway
+---
 
-### 1.1 Crear Cuenta en Railway
-1. Ve a [railway.app](https://railway.app)
-2. Regístrate con GitHub
-3. Crea un nuevo proyecto: "abono-organico-backend"
+## 🛠️ Paso 1: Configuración de Base de Datos y Backend (Railway)
 
-### 1.2 Agregar PostgreSQL
-1. Click en "+ New"
-2. Selecciona "Database" → "PostgreSQL"
-3. Espera a que se provisione
-4. Copia la `DATABASE_URL` (la necesitarás después)
+### 1.1 Crear Proyecto y Base de Datos
+1.  Entra a Railway y crea un **"New Project"**.
+2.  Selecciona **"Provision PostgreSQL"**.
+3.  Una vez creada, haz clic en la tarjeta de PostgreSQL y ve a la pestaña **"Variables"**.
+4.  Copia la `DATABASE_URL` (se ve como `postgresql://postgres:password@roundhouse.proxy.rlwy.net:PORT/railway`).
 
-### 1.3 Desplegar NestJS Backend
-1. Click en "+ New" → "GitHub Repo"
-2. Conecta tu repositorio
-3. Selecciona la carpeta `backend/`
-4. Railway detectará automáticamente NestJS
+### 1.2 Desplegar el Backend (NestJS)
+1.  En el mismo proyecto, haz clic en **"+ New"** → **"GitHub Repo"**.
+2.  Selecciona tu repositorio: `Abono-Organico-El-Lago`.
+3.  **Importante**: Railway intentará desplegar todo. Necesitamos decirle que solo despliegue el backend.
+4.  Haz clic en la tarjeta del repositorio recién creado → **"Settings"**.
+5.  En **"Root Directory"**, escribe: `/backend`.
+6.  Ve a la pestaña **"Variables"** y configura las siguientes (¡UNA POR UNA O EN BLOQUE!):
 
-### 1.4 Configurar Variables de Entorno
-En Railway, ve a "Variables" y agrega:
+| Variable | Descripción | Valor Ejemplo |
+| :--- | :--- | :--- |
+| `PORT` | Puerto interno | `3000` |
+| `DATABASE_URL` | Conexión a BD | *(Pegar la que copiaste en el paso 1.1)* |
+| `JWT_SECRET` | Secreto para tokens | `un_secreto_super_largo_y_seguro_123!` |
+| `JWT_EXPIRATION` | Duración del token | `7d` |
+| `FRONTEND_URL` | URL de Vercel (Paso 3) | `https://abono-organico-el-lago.vercel.app` (Ponlo temporal, luego actualizas) |
+| `GOOGLE_CLIENT_ID` | OAuth Google | *(De tu Google Console)* |
+| `GOOGLE_CLIENT_SECRET` | OAuth Google | *(De tu Google Console)* |
+| `GOOGLE_CALLBACK_URL` | Redirección OAuth | `https://<TU-URL-BACKEND-RAILWAY>/auth/google/callback` |
+| `CLOUDINARY_CLOUD_NAME`| Imágenes | *(De tu dashboard de Cloudinary)* |
+| `CLOUDINARY_API_KEY` | Imágenes | *(De tu dashboard de Cloudinary)* |
+| `CLOUDINARY_API_SECRET`| Imágenes | *(De tu dashboard de Cloudinary)* |
 
-```
-DATABASE_URL=<copiado automáticamente de PostgreSQL>
-JWT_SECRET=tu_secreto_super_seguro_aqui
-GOOGLE_CLIENT_ID=<tu_google_client_id>
-GOOGLE_CLIENT_SECRET=<tu_google_client_secret>
-FRONTEND_URL=https://tu-app.vercel.app
-PORT=3000
-```
+7.  Ve a la pestaña **"Settings"** → **"Networking"** y asegúrate de hacer clic en **"Generate Domain"**.
+8.  Copia este dominio (ej: `web-production-1234.up.railway.app`). Este será tu `<TU-URL-BACKEND-RAILWAY>`.
+9.  **Vuelve a "Variables"** y actualiza `GOOGLE_CALLBACK_URL` con el dominio real que acabas de generar.
 
-### 1.5 Obtener URL del Backend
-Una vez desplegado, Railway te dará una URL como:
-```
-https://abono-organico-backend.up.railway.app
-```
-**¡Guarda esta URL!**
+---
 
-## Paso 2: Desplegar Chatbot en Railway
+## 🤖 Paso 2: Desplegar el Chatbot (Railway)
 
-### 2.1 Crear Nuevo Servicio
-1. En el mismo proyecto Railway, click "+ New"
-2. Selecciona "GitHub Repo"
-3. Selecciona la carpeta `chatbot-service/`
+1.  En el mismo proyecto de Railway, clic en **"+ New"** → **"GitHub Repo"** (el mismo repo).
+2.  Clic en la nueva tarjeta → **"Settings"**.
+3.  En **"Root Directory"**, escribe: `/chatbot-service`.
+4.  Ve a **"Variables"** y configura:
 
-### 2.2 Configurar Variables de Entorno
-```
-GOOGLE_API_KEY=<opcional - deja en blanco si usas respuestas simples>
-NESTJS_API_URL=https://abono-organico-backend.up.railway.app
-PORT=8000
-```
+| Variable | Descripción | Valor Ejemplo |
+| :--- | :--- | :--- |
+| `PORT` | Puerto interno | `8000` |
+| `NESTJS_API_URL` | Conexión al Backend | `https://<TU-URL-BACKEND-RAILWAY>` (Sin barra al final) |
+| `GOOGLE_API_KEY` | Para Gemini AI | *(Tu clave de API de Google AI Studio)* |
 
-### 2.3 Obtener URL del Chatbot
-Railway te dará una URL como:
-```
-https://abono-organico-chatbot.up.railway.app
-```
-**¡Guarda esta URL!**
+5.  Ve a **"Settings"** → **"Networking"** → **"Generate Domain"**.
+6.  Copia este dominio (ej: `chatbot-production-5678.up.railway.app`).
 
-## Paso 3: Desplegar Frontend en Vercel
+---
 
-### 3.1 Preparar Repositorio
-Asegúrate de que los cambios estén en GitHub:
-```bash
-git add .
-git commit -m "Prepare for Vercel deployment"
-git push origin main
-```
+## 🌐 Paso 3: Desplegar el Frontend (Vercel)
 
-### 3.2 Crear Proyecto en Vercel
-1. Ve a [vercel.com](https://vercel.com)
-2. Click "Add New" → "Project"
-3. Importa tu repositorio de GitHub
-4. Vercel detectará Next.js automáticamente
+1.  Entra a Vercel y haz clic en **"Add New..."** → **"Project"**.
+2.  Importa el repositorio `Abono-Organico-El-Lago`.
+3.  En **"Framework Preset"**, debería detectar Next.js automáticamente.
+4.  En **"Root Directory"**, selecciona **Edit** y elige la carpeta raíz `.` (o déjalo por defecto si tu frontend es la raíz, pero en tu caso el frontend está mezclado en la raíz). **OJO**: Como tu frontend está en la raíz (`src/app`), déjalo por defecto.
+5.  Despliega la sección **"Environment Variables"** y agrega:
 
-### 3.3 Configurar Variables de Entorno
-En Vercel, ve a "Settings" → "Environment Variables" y agrega:
+| Variable | Descripción | Valor |
+| :--- | :--- | :--- |
+| `NEXT_PUBLIC_API_URL` | URL del Backend | `https://<TU-URL-BACKEND-RAILWAY>` |
+| `NEXT_PUBLIC_CHATBOT_WS`| WebSocket del Chatbot | `wss://<TU-URL-CHATBOT-RAILWAY>/ws/chat` (Nota: usa `wss://`) |
 
-```
-NEXT_PUBLIC_API_URL=https://abono-organico-backend.up.railway.app
-NEXT_PUBLIC_CHATBOT_WS=wss://abono-organico-chatbot.up.railway.app/ws/chat
-```
+6.  Haz clic en **"Deploy"**.
+7.  Vercel te dará una URL (ej: `https://abono-organico-el-lago.vercel.app`).
 
-### 3.4 Desplegar
-1. Click "Deploy"
-2. Espera 2-3 minutos
-3. Tu sitio estará en: `https://abono-organico-el-lago.vercel.app`
+---
 
-## Paso 4: Configurar CORS en Backend
+## 🔄 Paso 4: Conexión Final y Ajustes
 
-Actualiza `backend/src/main.ts` para permitir tu dominio de Vercel:
+### 4.1 Actualizar CORS en Backend (Si cambió la URL)
+Si Vercel te dio una URL diferente a la que configuraste en `FRONTEND_URL` del backend:
+1.  Ve a Railway → Backend → Variables.
+2.  Actualiza `FRONTEND_URL` con la URL final de Vercel.
+3.  Railway se reiniciará automáticamente.
 
-```typescript
-app.enableCors({
-  origin: [
-    'http://localhost:9002',
-    'https://abono-organico-el-lago.vercel.app', // Tu dominio de Vercel
-  ],
-  credentials: true,
-});
-```
+### 4.2 Actualizar Google Cloud Console
+1.  Ve a [Google Cloud Console](https://console.cloud.google.com).
+2.  Selecciona tu proyecto y ve a "APIs & Services" → "Credentials".
+3.  Edita tu cliente OAuth 2.0.
+4.  En **"Authorized JavaScript origins"**, agrega: `https://abono-organico-el-lago.vercel.app` (tu URL de Vercel).
+5.  En **"Authorized redirect URIs"**, asegura que esté: `https://<TU-URL-BACKEND-RAILWAY>/auth/google/callback`.
 
-Haz commit y push. Railway redesplegará automáticamente.
+---
 
-## Paso 5: Verificación Final
+## 🛑 Solución de Problemas Comunes
 
-### Checklist de Pruebas
-- [ ] Frontend carga correctamente
-- [ ] Login funciona
-- [ ] Registro funciona
-- [ ] Google OAuth funciona
-- [ ] Productos se muestran
-- [ ] Chatbot responde
-- [ ] Carrito funciona
-- [ ] Mapa se muestra correctamente
+### Error de "CORS" en el navegador
+*   **Causa**: El backend no permite peticiones desde tu frontend en Vercel.
+*   **Solución**: Verifica que la variable `FRONTEND_URL` en Railway coincida *exactamente* con la URL de tu navegador (sin slash al final). Revisa también `main.ts` en el backend para asegurar que usa esta variable o una lista de orígenes permitidos.
 
-## Solución de Problemas
+### Chatbot no conecta
+*   **Causa**: Estás usando `https://` en lugar de `wss://` para la variable Web Socket o el puerto es incorrecto.
+*   **Solución**: En Vercel, `NEXT_PUBLIC_CHATBOT_WS` debe empezar por `wss://`.
 
-### Frontend no se conecta al Backend
-- Verifica que `NEXT_PUBLIC_API_URL` esté configurada en Vercel
-- Asegúrate de que el backend esté corriendo en Railway
-- Revisa la configuración de CORS
+### Imágenes no cargan
+*   **Causa**: Cloudinary no está configurado o las URLs antiguas apuntan a `localhost`.
+*   **Solución**: Asegúrate de haber ejecutado el script de migración (`migrate-images.ts`) si tenías datos previos, y que `CLOUDINARY_*` variables estén en Railway.
 
-### Chatbot no funciona
-- Verifica que `NEXT_PUBLIC_CHATBOT_WS` use `wss://` (no `ws://`)
-- Asegúrate de que el servicio de chatbot esté corriendo en Railway
+---
 
-### Error de Base de Datos
-- Verifica que `DATABASE_URL` esté configurada correctamente
-- Asegúrate de que PostgreSQL esté corriendo en Railway
-
-## URLs Finales
-
-Después del despliegue, tendrás:
-
-- **Frontend**: `https://abono-organico-el-lago.vercel.app`
-- **Backend**: `https://abono-organico-backend.up.railway.app`
-- **Chatbot**: `https://abono-organico-chatbot.up.railway.app`
-- **Base de Datos**: Gestionada internamente por Railway
-
-## Costos
-
-- **Vercel**: Gratis (plan Hobby)
-- **Railway**: $5/mes de crédito gratis, luego ~$10-15/mes
-- **Total**: ~$10-15/mes después del crédito inicial
-
-## Próximos Pasos
-
-1. Configura un dominio personalizado en Vercel
-2. Habilita HTTPS en todos los servicios (automático)
-3. Configura monitoreo y logs
-4. Implementa backups de base de datos
+## 💰 Resumen de Costos (Estimado)
+*   **Vercel**: $0 (Hobby Tier).
+*   **Cloudinary**: $0 (Free Tier).
+*   **Railway**: $5 de crédito inicial gratis. Luego modelo "pay as you go". Para este proyecto, el costo debería ser menor a $5-8/mes si el tráfico es bajo/moderado. **Tip**: Railway suspende servicios inactivos para ahorrar dinero si lo configuras.

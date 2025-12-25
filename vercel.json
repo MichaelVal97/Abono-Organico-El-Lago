@@ -4,6 +4,12 @@
     "devCommand": "npm run dev",
     "installCommand": "npm install",
     "framework": "nextjs",
+    "rewrites": [
+        {
+            "source": "/api/(.*)",
+            "destination": "/api"
+        }
+    ],
     "regions": [
         "iad1"
     ],
