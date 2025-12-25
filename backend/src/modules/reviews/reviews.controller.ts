@@ -23,7 +23,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 @ApiTags('reviews')
 @Controller('reviews')
 export class ReviewsController {
-  constructor(private readonly reviewsService: ReviewsService) {}
+  constructor(private readonly reviewsService: ReviewsService) { }
 
   @Post()
   @UseGuards(JwtAuthGuard)
@@ -32,7 +32,7 @@ export class ReviewsController {
   @ApiResponse({ status: 201, description: 'Reseña creada exitosamente' })
   @ApiResponse({ status: 401, description: 'No autorizado' })
   @ApiResponse({ status: 404, description: 'Producto no encontrado' })
-  create(@Request() req, @Body() createReviewDto: CreateReviewDto) {
+  create(@Request() req: any, @Body() createReviewDto: CreateReviewDto) {
     return this.reviewsService.create(req.user.id, createReviewDto);
   }
 
@@ -67,7 +67,7 @@ export class ReviewsController {
   @ApiResponse({ status: 404, description: 'Reseña no encontrada' })
   update(
     @Param('id') id: string,
-    @Request() req,
+    @Request() req: any,
     @Body() updateReviewDto: UpdateReviewDto,
   ) {
     return this.reviewsService.update(id, req.user.id, updateReviewDto);
@@ -81,7 +81,7 @@ export class ReviewsController {
   @ApiResponse({ status: 401, description: 'No autorizado' })
   @ApiResponse({ status: 403, description: 'No tienes permiso' })
   @ApiResponse({ status: 404, description: 'Reseña no encontrada' })
-  delete(@Param('id') id: string, @Request() req) {
+  delete(@Param('id') id: string, @Request() req: any) {
     return this.reviewsService.delete(id, req.user.id);
   }
 }

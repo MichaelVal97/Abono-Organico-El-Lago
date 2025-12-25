@@ -51,14 +51,14 @@ export class UsersController {
   @Get('profile')
   @ApiOperation({ summary: 'Obtener perfil del usuario autenticado' })
   @ApiResponse({ status: 200, description: 'Perfil obtenido exitosamente' })
-  async getProfile(@Request() req) {
+  async getProfile(@Request() req: any) {
     return this.usersService.getProfile(req.user.id);
   }
 
   @Patch('profile')
   @ApiOperation({ summary: 'Actualizar perfil del usuario' })
   @ApiResponse({ status: 200, description: 'Perfil actualizado exitosamente' })
-  async updateProfile(@Request() req, @Body() updateUserDto: UpdateUserDto) {
+  async updateProfile(@Request() req: any, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.updateProfile(req.user.id, updateUserDto);
   }
 
@@ -71,7 +71,7 @@ export class UsersController {
       limits: {
         fileSize: 5 * 1024 * 1024, // 5MB
       },
-      fileFilter: (req, file, cb) => {
+      fileFilter: (req: any, file, cb) => {
         if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
           return cb(
             new BadRequestException('Solo se permiten archivos de imagen'),
@@ -83,7 +83,7 @@ export class UsersController {
     }),
   )
   async uploadAvatar(
-    @Request() req,
+    @Request() req: any,
     @UploadedFile() file: Express.Multer.File,
   ) {
     if (!file) {
@@ -100,7 +100,7 @@ export class UsersController {
   @Delete('avatar')
   @ApiOperation({ summary: 'Eliminar avatar del usuario' })
   @ApiResponse({ status: 200, description: 'Avatar eliminado exitosamente' })
-  async deleteAvatar(@Request() req) {
+  async deleteAvatar(@Request() req: any) {
     return this.usersService.deleteAvatar(req.user.id);
   }
 
@@ -110,7 +110,7 @@ export class UsersController {
     status: 200,
     description: 'Preferencias obtenidas exitosamente',
   })
-  async getPreferences(@Request() req) {
+  async getPreferences(@Request() req: any) {
     return this.usersService.getPreferences(req.user.id);
   }
 
@@ -121,7 +121,7 @@ export class UsersController {
     description: 'Preferencias actualizadas exitosamente',
   })
   async updatePreferences(
-    @Request() req,
+    @Request() req: any,
     @Body() updatePreferencesDto: UpdatePreferencesDto,
   ) {
     return this.usersService.updatePreferences(
@@ -136,7 +136,7 @@ export class UsersController {
     status: 200,
     description: 'Direcciones obtenidas exitosamente',
   })
-  async getAddresses(@Request() req) {
+  async getAddresses(@Request() req: any) {
     return this.usersService.getAddresses(req.user.id);
   }
 
@@ -144,7 +144,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Crear nueva dirección' })
   @ApiResponse({ status: 201, description: 'Dirección creada exitosamente' })
   async createAddress(
-    @Request() req,
+    @Request() req: any,
     @Body() createAddressDto: CreateAddressDto,
   ) {
     return this.usersService.createAddress(req.user.id, createAddressDto);
@@ -157,7 +157,7 @@ export class UsersController {
     description: 'Dirección actualizada exitosamente',
   })
   async updateAddress(
-    @Request() req,
+    @Request() req: any,
     @Param('id') addressId: string,
     @Body() updateAddressDto: UpdateAddressDto,
   ) {
@@ -171,7 +171,7 @@ export class UsersController {
   @Delete('addresses/:id')
   @ApiOperation({ summary: 'Eliminar dirección' })
   @ApiResponse({ status: 200, description: 'Dirección eliminada exitosamente' })
-  async deleteAddress(@Request() req, @Param('id') addressId: string) {
+  async deleteAddress(@Request() req: any, @Param('id') addressId: string) {
     return this.usersService.deleteAddress(req.user.id, addressId);
   }
 
@@ -181,7 +181,7 @@ export class UsersController {
     status: 200,
     description: 'Dirección marcada como predeterminada',
   })
-  async setDefaultAddress(@Request() req, @Param('id') addressId: string) {
+  async setDefaultAddress(@Request() req: any, @Param('id') addressId: string) {
     return this.usersService.setDefaultAddress(req.user.id, addressId);
   }
 

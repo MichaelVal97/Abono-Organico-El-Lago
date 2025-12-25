@@ -20,13 +20,13 @@ import {
 @ApiTags('orders')
 @Controller('orders')
 export class OrdersController {
-  constructor(private readonly ordersService: OrdersService) {}
+  constructor(private readonly ordersService: OrdersService) { }
 
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new order' })
-  create(@Request() req, @Body() createOrderDto: CreateOrderDto) {
+  create(@Request() req: any, @Body() createOrderDto: CreateOrderDto) {
     console.log('Creating order. User:', req.user);
     console.log('DTO:', createOrderDto);
     return this.ordersService.create(req.user.id, createOrderDto);
@@ -36,7 +36,7 @@ export class OrdersController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get orders for the authenticated user' })
-  getMyOrders(@Request() req) {
+  getMyOrders(@Request() req: any) {
     return this.ordersService.findByUser(req.user.id);
   }
 
