@@ -91,17 +91,17 @@ export class Product {
   priceRange!: string;
 
   @OneToMany('Review', 'product')
-  reviews: any[];
+  reviews!: any[];
 
   @ApiProperty({
     description: 'Fecha de creación del registro',
   })
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @ApiProperty({
     description: 'Fecha de última actualización del registro',
   })
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

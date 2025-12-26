@@ -13,25 +13,25 @@ import { Product } from '../../products/entities/product.entity';
 @Entity('reviews')
 export class Review {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ type: 'int', default: 5 })
-  rating: number; // 1-5 estrellas
+  rating!: number; // 1-5 estrellas
 
   @Column({ type: 'text' })
-  comment: string;
+  comment!: string;
 
   @ManyToOne(() => User, { eager: true })
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user!: User;
 
   @ManyToOne(() => Product, (product) => product.reviews)
   @JoinColumn({ name: 'product_id' })
-  product: Product;
+  product!: Product;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 }

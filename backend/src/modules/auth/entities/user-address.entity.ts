@@ -17,40 +17,40 @@ export enum AddressType {
 @Entity('user_addresses')
 export class UserAddress {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({
     type: 'enum',
     enum: AddressType,
     default: AddressType.SHIPPING,
   })
-  type: AddressType;
+  type!: AddressType;
 
   @Column()
-  street: string;
+  street!: string;
 
   @Column()
-  city: string;
+  city!: string;
 
   @Column()
-  state: string;
+  state!: string;
 
   @Column({ name: 'zip_code' })
-  zipCode: string;
+  zipCode!: string;
 
   @Column({ default: 'Colombia' })
-  country: string;
+  country!: string;
 
   @Column({ default: false, name: 'is_default' })
-  isDefault: boolean;
+  isDefault!: boolean;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @ManyToOne(() => User, (user) => user.addresses, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user!: User;
 }

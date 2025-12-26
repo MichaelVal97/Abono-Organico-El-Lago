@@ -15,10 +15,10 @@ import { Order } from '../../orders/entities/order.entity';
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ unique: true })
-  email: string;
+  email!: string;
 
   @Column({ nullable: true })
   @Exclude()
@@ -28,13 +28,13 @@ export class User {
   googleId?: string;
 
   @Column({ name: 'first_name' })
-  firstName: string;
+  firstName!: string;
 
   @Column({ name: 'last_name' })
-  lastName: string;
+  lastName!: string;
 
   @Column({ default: 'user' })
-  role: 'user' | 'admin';
+  role!: 'user' | 'admin';
 
   @Column({ nullable: true })
   phone?: string;
@@ -46,28 +46,28 @@ export class User {
   avatar?: string;
 
   @Column({ default: true, name: 'is_active' })
-  isActive: boolean;
+  isActive!: boolean;
 
   @Column({ default: false, name: 'is_email_verified' })
-  isEmailVerified: boolean;
+  isEmailVerified!: boolean;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @OneToOne(() => UserPreferences, (preferences) => preferences.user, {
     cascade: true,
     eager: true,
   })
-  preferences: UserPreferences;
+  preferences!: UserPreferences;
 
   @OneToMany(() => UserAddress, (address) => address.user, {
     cascade: true,
   })
-  addresses: UserAddress[];
+  addresses!: UserAddress[];
 
   @OneToMany(() => Order, (order) => order.user)
-  orders: Order[];
+  orders!: Order[];
 }
