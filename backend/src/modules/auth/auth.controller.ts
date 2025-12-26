@@ -22,7 +22,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly configService: ConfigService,
-  ) {}
+  ) { }
 
   @Post('register')
   @ApiOperation({ summary: 'Registrar nuevo usuario' })
@@ -51,7 +51,7 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   @ApiOperation({ summary: 'Callback de Google OAuth' })
-  async googleAuthCallback(@Req() req, @Res() res) {
+  async googleAuthCallback(@Req() req: any, @Res() res: any) {
     // User is attached to request by Passport
     const result = await this.authService.validateGoogleUser(req.user);
 

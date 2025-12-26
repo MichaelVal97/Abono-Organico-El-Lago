@@ -15,14 +15,14 @@ export class Product {
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ApiProperty({
     description: 'Nombre del producto',
     example: 'Estiércol de Vaca',
   })
   @Column({ length: 255 })
-  name: string;
+  name!: string;
 
   @ApiProperty({
     description: 'Descripción detallada del producto',
@@ -30,35 +30,35 @@ export class Product {
       'Estiércol de vaca de alta calidad, perfecto para enriquecer el suelo de su jardín y huerto. 100% orgánico y compostado.',
   })
   @Column('text')
-  description: string;
+  description!: string;
 
   @ApiProperty({
     description: 'Precio del producto en dólares',
     example: 15.99,
   })
   @Column('decimal', { precision: 10, scale: 2 })
-  price: number;
+  price!: number;
 
   @ApiProperty({
     description: 'Cantidad disponible en inventario',
     example: 100,
   })
   @Column('int')
-  stock: number;
+  stock!: number;
 
   @ApiProperty({
     description: 'URL de la imagen del producto',
     example: 'https://example.com/images/estiercol-vaca.jpg',
   })
   @Column({ length: 500 })
-  imageUrl: string;
+  imageUrl!: string;
 
   @ApiProperty({
     description: 'Hint para generación de imagen con IA',
     example: 'organic cow manure fertilizer bag',
   })
   @Column({ length: 255 })
-  imageHint: string;
+  imageHint!: string;
 
   @ApiProperty({
     description: 'Galería de imágenes adicionales',
@@ -66,14 +66,14 @@ export class Product {
     type: [String],
   })
   @Column('simple-array', { nullable: true })
-  images: string[];
+  images!: string[];
 
   @ApiProperty({
     description: 'Categoría del producto',
     example: 'PLAN DE FERTILIZACIÓN',
   })
   @Column({ length: 100, nullable: true })
-  category: string;
+  category!: string;
 
   @ApiProperty({
     description: 'Etiquetas del producto',
@@ -81,14 +81,14 @@ export class Product {
     type: [String],
   })
   @Column('simple-array', { nullable: true })
-  tags: string[];
+  tags!: string[];
 
   @ApiProperty({
     description: 'Rango de precio o presentación',
     example: '1 Bulto - 50Kg',
   })
   @Column({ length: 100, nullable: true })
-  priceRange: string;
+  priceRange!: string;
 
   @OneToMany('Review', 'product')
   reviews: any[];
